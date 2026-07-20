@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#6C5CE7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="BoardReady">
+<title>BoardReady English · Class XII</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;700;800&family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ==========================================================
+   BOARDREADY ENGLISH · CLASS XII
+   Vibrant, mobile-first study app in a single HTML file.
+   ========================================================== */
+
+:root{
+  --bg:#F6F4FE; --surface:#FFFFFF; --surface2:#F2EFFC;
+  --ink:#221E3F; --ink2:#4A4570; --muted:#7B76A3; --line:#E7E3F7;
+
+  --brand:#6C5CE7; --brand2:#8B7CF3; --brandSoft:#EDEAFF;
+  --flam:#F2477E;  --flamSoft:#FFE7EF;
+  --poet:#E08700;  --poetSoft:#FFF1D9;
+  --vist:#0FA396;  --vistSoft:#DDF6F2;
+  --arch:#7C8798;  --archSoft:#EDF0F4;
+
+  --good:#1DB954; --goodSoft:#E3F8EB;
+  --bad:#EF4444;  --badSoft:#FDE8E8;
+
+  --shadow:0 12px 32px rgba(76,60,178,.14);
+  --shadow-sm:0 4px 14px rgba(76,60,178,.10);
+}
+[data-theme="dark"]{
+  --bg:#141126; --surface:#1E1A38; --surface2:#282350;
+  --ink:#F2F0FF; --ink2:#CFC9F0; --muted:#9C96C6; --line:#332E58;
+
+  --brandSoft:#2D2758;
+  --flamSoft:#3D2136; --poetSoft:#3B2D14; --vistSoft:#15332F; --archSoft:#262B36;
+  --goodSoft:#16321F; --badSoft:#3A1D1D;
+
+  --shadow:0 12px 32px rgba(0,0,0,.5);
+  --shadow-sm:0 4px 14px rgba(0,0,0,.4);
+}
+
+*{ box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+html{ scroll-behavior:smooth; }
+body{
+  margin:0; min-height:100vh;
+  background:var(--bg);
+  color:var(--ink);
+  font-family:'Outfit',system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.55;
+  transition:background .3s, color .3s;
+}
+body::before{
+  content:""; position:fixed; inset:-10%; z-index:-1; pointer-events:none;
+  background:
+    radial-gradient(560px 400px at 10% 6%, rgba(242,71,126,.13), transparent 60%),
+    radial-gradient(680px 480px at 92% 10%, rgba(108,92,231,.15), transparent 60%),
+    radial-gradient(600px 500px at 70% 96%, rgba(15,163,150,.12), transparent 60%);
+}
+button{ font:inherit; }
+.hidden{ display:none !important; }
+:focus-visible{ outline:3px solid var(--brand); outline-offset:2px; border-radius:6px; }
+
+/* ---------------- Top bar ---------------- */
+.topbar{
+  position:sticky; top:0; z-index:70;
+  padding-top:env(safe-area-inset-top);
+  background:var(--bg);
+  background:color-mix(in srgb, var(--bg) 82%, transparent);
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.tb-in{
+  max-width:1160px; margin:0 auto; padding:10px 16px;
+  display:flex; align-items:center; justify-content:space-between; gap:12px;
+}
+.logo{ display:flex; align-items:center; gap:10px; min-width:0; }
+.logo-badge{
+  width:42px; height:42px; flex:none; border-radius:14px;
+  background:linear-gradient(135deg,var(--flam),var(--brand));
+  display:flex; align-items:center; justify-content:center;
+  font-size:21px; box-shadow:0 6px 16px rgba(108,92,231,.35);
+}
+.logo-txt{ font-family:'Baloo 2',cursive; font-weight:800; font-size:20px; line-height:1.05; }
+.logo-txt em{ font-style:normal; color:var(--brand); }
+.logo-sub{ font-size:10.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; color:var(--muted); }
+.tb-right{ display:flex; align-items:center; gap:8px; }
+.search-desk{
+  display:none;
+  width:250px; border:1.5px solid var(--line); background:var(--surface);
+  color:var(--ink); border-radius:999px; padding:9px 16px; font-size:13.5px;
+}
+.search-desk::placeholder{ color:var(--muted); }
+.icon-btn{
+  width:42px; height:42px; border-radius:14px; border:1.5px solid var(--line);
+  background:var(--surface); color:var(--ink); font-size:18px; cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .12s, background .15s;
+}
+.icon-btn:active{ transform:scale(.92); }
+
+/* ---------------- Shell + views ---------------- */
+.shell{ max-width:1160px; margin:0 auto; padding:18px 16px calc(112px + env(safe-area-inset-bottom)); }
+.view{ display:none; }
+.view.active{ display:block; animation:viewIn .28s ease; }
+@keyframes viewIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+
+/* ---------------- Bottom nav (mobile) / side rail (desktop) ---------------- */
+.navbar{
+  position:fixed; left:12px; right:12px; bottom:12px; z-index:80;
+  display:flex; gap:4px;
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:24px; box-shadow:var(--shadow);
+  padding:6px 8px calc(6px + env(safe-area-inset-bottom));
+}
+.nav-btn{
+  flex:1; display:flex; flex-direction:column; align-items:center; gap:2px;
+  background:none; border:0; border-radius:16px; padding:8px 4px;
+  color:var(--muted); cursor:pointer; font-size:11px; font-weight:700;
+  transition:background .15s, color .15s;
+}
+.nav-btn .ic{ font-size:20px; line-height:1; transition:transform .15s; }
+.nav-btn.active{ color:var(--brand); background:var(--brandSoft); }
+.nav-btn.active .ic{ transform:translateY(-2px) scale(1.12); }
+
+@media (min-width:861px){
+  .search-desk{ display:block; }
+  .shell{ padding:26px 24px 48px 116px; }
+  .navbar{
+    left:16px; right:auto; top:92px; bottom:auto;
+    flex-direction:column; width:78px; gap:6px;
+    padding:10px 8px; border-radius:22px;
+  }
+  .nav-btn{ flex:none; padding:10px 4px; }
+}
+
+/* ---------------- Shared cards, buttons, tags ---------------- */
+.card{
+  background:var(--surface); border:1px solid var(--line);
+  border-radius:22px; padding:18px; box-shadow:var(--shadow-sm);
+}
+.sec-h{
+  font-family:'Baloo 2',cursive; font-weight:800; font-size:21px;
+  margin:26px 0 12px; display:flex; align-items:center; gap:8px;
+}
+.btn{
+  border:0; border-radius:999px; padding:13px 22px;
+  font-weight:700; font-size:15px; cursor:pointer;
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  transition:transform .12s, box-shadow .15s, background .15s;
+}
+.btn:active{ transform:scale(.96); }
+.btn-primary{
+  background:linear-gradient(135deg,var(--brand),var(--brand2)); color:#fff;
+  box-shadow:0 8px 20px rgba(108,92,231,.35);
+}
+.btn-primary:hover{ box-shadow:0 10px 26px rgba(108,92,231,.45); }
+.btn-soft{ background:var(--surface); border:1.5px solid var(--line); color:var(--ink2); }
+.btn-soft:hover{ border-color:var(--brand); color:var(--brand); }
+.btn-white{ background:#fff; color:var(--brand); box-shadow:0 6px 16px rgba(0,0,0,.18); }
+.tag{
+  display:inline-flex; align-items:center; gap:4px;
+  font-size:11px; font-weight:800; letter-spacing:.02em;
+  padding:4px 11px; border-radius:999px; white-space:nowrap;
+}
+.ring-wrap{ position:relative; display:inline-block; }
+.ring-num{
+  position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+  font-family:'Baloo 2',cursive; font-weight:800;
+}
+
+/* ---------------- Home ---------------- */
+.hero{
+  border-radius:28px; padding:22px;
+  background:linear-gradient(135deg,var(--brand) 0%,#7A5AF0 55%,var(--flam) 130%);
+  color:#fff; box-shadow:var(--shadow);
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  position:relative; overflow:hidden;
+}
+.hero::after{
+  content:"🦩"; position:absolute; right:-14px; bottom:-22px;
+  font-size:110px; opacity:.14; transform:rotate(-12deg); pointer-events:none;
+}
+.hero-hi{ font-family:'Baloo 2',cursive; font-weight:800; font-size:clamp(21px,5.4vw,27px); line-height:1.15; margin:0; }
+.hero-sub{ margin:6px 0 0; font-size:13.5px; color:rgba(255,255,255,.88); max-width:420px; }
+.hero .ring-num{ color:#fff; font-size:18px; }
+.cont-card{ display:flex; align-items:center; justify-content:space-between; gap:14px; margin-top:14px; }
+.cc-kicker{ font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0; }
+.cc-name{ font-family:'Baloo 2',cursive; font-weight:800; font-size:19px; margin:2px 0 6px; }
+.bar-row{ display:flex; align-items:center; gap:12px; padding:8px 0; }
+.bar-tagcol{ width:118px; flex:none; }
+.bar-track{ flex:1; height:12px; border-radius:99px; background:var(--surface2); overflow:hidden; }
+.bar-fill{ height:100%; border-radius:99px; transition:width .5s ease; }
+.bar-n{ width:44px; flex:none; text-align:right; font-size:12.5px; font-weight:700; color:var(--muted); }
+.quick{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+.quick-btn{
+  border:0; cursor:pointer; text-align:left;
+  border-radius:22px; padding:16px; color:var(--ink);
+  background:var(--surface); border:1.5px solid var(--line); box-shadow:var(--shadow-sm);
+  transition:transform .15s, border-color .15s;
+}
+.quick-btn:hover{ transform:translateY(-2px); border-color:var(--brand); }
+.qb-ic{ font-size:26px; }
+.qb-t{ font-family:'Baloo 2',cursive; font-weight:800; font-size:16.5px; margin:6px 0 2px; }
+.qb-s{ font-size:12.5px; color:var(--muted); }
+.note-card{ font-size:13.5px; color:var(--ink2); background:var(--surface2); border:0; }
+
+/* ---------------- Library ---------------- */
+.search-big{
+  width:100%; border:1.5px solid var(--line); background:var(--surface);
+  color:var(--ink); border-radius:18px; padding:14px 18px; font-size:15px;
+  box-shadow:var(--shadow-sm); margin-bottom:12px;
+}
+.search-big::placeholder{ color:var(--muted); }
+.filters{ display:flex; gap:8px; overflow-x:auto; padding:2px 2px 10px; scrollbar-width:none; }
+.filters::-webkit-scrollbar{ display:none; }
+.pill{
+  border:1.5px solid var(--line); background:var(--surface); color:var(--ink2);
+  border-radius:999px; padding:8px 15px; font-weight:700; font-size:13px;
+  cursor:pointer; white-space:nowrap; transition:all .15s;
+}
+.pill.active{ background:var(--brand); border-color:var(--brand); color:#fff; box-shadow:0 6px 14px rgba(108,92,231,.3); }
+.grid{ display:grid; grid-template-columns:1fr; gap:12px; }
+@media (min-width:620px){ .grid{ grid-template-columns:1fr 1fr; } }
+@media (min-width:1020px){ .grid{ grid-template-columns:1fr 1fr 1fr; } }
+.ch-card{
+  text-align:left; cursor:pointer;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:20px; padding:16px; box-shadow:var(--shadow-sm);
+  transition:transform .15s, border-color .15s;
+}
+.ch-card:hover{ transform:translateY(-3px); border-color:var(--brand); }
+.ch-card.archive{ border-style:dashed; opacity:.9; }
+.cc-tags{ display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px; }
+.cc-title{ font-family:'Baloo 2',cursive; font-weight:800; font-size:18px; line-height:1.2; margin:0; }
+.cc-auth{ font-size:12.5px; color:var(--muted); margin:3px 0 0; }
+.cc-foot{ display:flex; justify-content:space-between; align-items:center; margin-top:12px; }
+.done-chip{ font-size:12px; font-weight:800; padding:5px 12px; border-radius:999px; background:var(--goodSoft); color:var(--good); }
+.todo-chip{ font-size:12px; font-weight:800; padding:5px 12px; border-radius:999px; background:var(--surface2); color:var(--muted); }
+.open-hint{ font-size:13px; font-weight:700; color:var(--brand); }
+.empty{ text-align:center; color:var(--muted); padding:34px 10px; font-weight:600; }
+
+/* ---------------- Reader ---------------- */
+.rd-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-bottom:14px; }
+.chip-btn{
+  border:1.5px solid var(--line); background:var(--surface); color:var(--ink2);
+  border-radius:999px; padding:9px 15px; font-weight:700; font-size:13px; cursor:pointer;
+  transition:all .15s;
+}
+.chip-btn:hover:not(:disabled){ border-color:var(--brand); color:var(--brand); }
+.chip-btn:disabled{ opacity:.4; cursor:default; }
+.rd-nav{ display:flex; gap:8px; }
+.rd-hero{
+  border-radius:26px; padding:20px;
+  display:flex; align-items:center; gap:16px; flex-wrap:wrap;
+}
+.rd-hero-main{ flex:1; min-width:220px; }
+.rd-title{ font-family:'Baloo 2',cursive; font-weight:800; font-size:clamp(25px,6vw,33px); line-height:1.12; margin:8px 0 2px; }
+.rd-auth{ font-size:13.5px; color:var(--ink2); font-weight:600; margin:0; }
+.rd-doodle{
+  flex:none; width:104px; height:104px; border-radius:26px;
+  background:var(--surface); box-shadow:var(--shadow-sm);
+  display:flex; align-items:center; justify-content:center;
+}
+.rd-doodle .doodle-svg{ width:68px; height:68px; }
+.rd-doodle .doodle-caption{ display:none; }
+.revised-pill{
+  display:inline-flex; align-items:center; gap:8px; margin-top:12px;
+  padding:9px 17px; border-radius:999px; cursor:pointer;
+  border:2px solid var(--good); color:var(--good); background:transparent;
+  font-weight:800; font-size:13.5px; transition:all .15s;
+}
+.revised-pill.on{ background:var(--good); color:#fff; box-shadow:0 6px 14px rgba(29,185,84,.35); }
+.banner{ border-radius:16px; padding:12px 15px; margin:14px 0 0; font-size:13.5px; font-weight:600; }
+.banner.warn{ background:var(--poetSoft); color:var(--poet); }
+.banner.info{ background:var(--brandSoft); color:var(--brand); }
+.theme-strip{ margin:16px 0; }
+.ts-kicker{ font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--muted); margin:0; }
+.ts-line{ font-family:'Baloo 2',cursive; font-weight:800; font-size:19px; margin:4px 0 6px; }
+.ts-sum{ color:var(--ink2); font-size:14.5px; margin:0; }
+.rd-grid{ display:grid; gap:20px; margin-top:4px; }
+@media (min-width:900px){ .rd-grid{ grid-template-columns:minmax(0,1.6fr) minmax(270px,1fr); align-items:start; } }
+.notes{ list-style:none; padding:0; margin:0; }
+.notes li{ position:relative; padding:11px 12px 11px 34px; font-size:15px; color:var(--ink2); }
+.notes li + li{ border-top:1.5px dashed var(--line); }
+.notes li::before{
+  content:""; position:absolute; left:12px; top:20px;
+  width:9px; height:9px; border-radius:3px; background:var(--brand); transform:rotate(45deg);
+}
+.notes strong{ color:var(--ink); font-weight:700; }
+.neon-highlight{
+  background:linear-gradient(120deg,#FFE18A,#FFD34D);
+  color:#5C4300; font-weight:700;
+  padding:1px 7px; border-radius:8px;
+  box-decoration-break:clone; -webkit-box-decoration-break:clone;
+}
+.side{ display:flex; flex-direction:column; gap:16px; }
+.side-card{ background:var(--surface); border:1px solid var(--line); border-radius:18px; padding:16px; box-shadow:var(--shadow-sm); }
+.sc-h{ font-family:'Baloo 2',cursive; font-weight:800; font-size:16.5px; margin:0 0 10px; display:flex; gap:8px; align-items:center; }
+.fstep{ position:relative; padding:0 0 14px 34px; font-size:13.5px; color:var(--ink2); }
+.fstep::before{ content:""; position:absolute; left:11px; top:26px; bottom:4px; border-left:2px dashed var(--line); }
+.fstep:last-child{ padding-bottom:0; }
+.fstep:last-child::before{ display:none; }
+.fno{
+  position:absolute; left:0; top:-1px; width:24px; height:24px; border-radius:9px;
+  background:var(--brandSoft); color:var(--brand); font-weight:800; font-size:12.5px;
+  display:flex; align-items:center; justify-content:center;
+}
+.term{ padding:10px 12px; border-radius:14px; background:var(--surface2); margin-bottom:8px; }
+.term h5{ margin:0; font-size:14px; font-weight:800; color:var(--ink); }
+.term p{ margin:3px 0 0; font-size:13px; color:var(--muted); }
+.quote{
+  margin:0 0 10px; padding:10px 12px 10px 14px;
+  border-left:4px solid var(--brand); background:var(--surface2);
+  border-radius:6px 14px 14px 6px; font-size:13.5px; color:var(--ink2);
+}
+.rd-actions{ display:flex; flex-wrap:wrap; gap:10px; margin-top:22px; }
+.doodle-svg{ width:88px; height:88px; }
+.doodle-caption{ display:block; font-size:11px; color:var(--muted); margin-top:6px; text-align:center; font-weight:600; }
+.ink-blue{ color:#5B79EF; }
+.ink-green{ color:var(--vist); }
+.ink-black{ color:var(--ink); }
+.ink-amber{ color:var(--poet); }
+.ink-red{ color:var(--flam); }
+
+/* ---------------- Quiz ---------------- */
+.drill-hero{
+  background:linear-gradient(135deg,var(--brand),var(--flam));
+  color:#fff; border-radius:26px; padding:22px;
+  display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;
+  box-shadow:var(--shadow);
+}
+.dh-t{ font-family:'Baloo 2',cursive; font-weight:800; font-size:24px; margin:0; }
+.dh-s{ margin:4px 0 0; font-size:13.5px; color:rgba(255,255,255,.88); max-width:430px; }
+.scope-grid{ display:grid; grid-template-columns:1fr; gap:10px; }
+@media (min-width:620px){ .scope-grid{ grid-template-columns:1fr 1fr 1fr; } }
+.scope-btn{
+  text-align:left; cursor:pointer;
+  background:var(--surface); border:1.5px solid var(--line);
+  border-radius:18px; padding:15px; transition:all .15s;
+}
+.scope-btn:hover{ transform:translateY(-2px); border-color:var(--brand); }
+.sb-t{ font-family:'Baloo 2',cursive; font-weight:800; font-size:16px; margin:6px 0 2px; }
+.sb-n{ font-size:12.5px; color:var(--muted); }
+.q-top{ display:flex; justify-content:space-between; align-items:center; gap:10px; }
+.q-track{ height:10px; background:var(--surface2); border-radius:99px; overflow:hidden; margin:12px 0 4px; }
+.q-fill{ height:100%; border-radius:99px; background:linear-gradient(90deg,var(--brand),var(--flam)); transition:width .3s; }
+.q-count{ font-size:12.5px; color:var(--muted); text-align:right; font-weight:600; }
+.q-card{ margin-top:12px; }
+.q-q{ font-family:'Baloo 2',cursive; font-weight:800; font-size:20px; line-height:1.3; margin:10px 0 16px; }
+.qopt{
+  display:flex; gap:12px; align-items:flex-start; width:100%; text-align:left;
+  background:var(--surface2); border:2px solid transparent; border-radius:16px;
+  padding:13px 14px; margin-bottom:10px; cursor:pointer;
+  font-size:14.5px; color:var(--ink2);
+  transition:border-color .15s, background .15s, transform .1s;
+}
+.qopt:not(:disabled):hover{ border-color:var(--brand); transform:translateX(2px); }
+.qopt:disabled{ cursor:default; }
+.ol{
+  flex:none; width:28px; height:28px; border-radius:10px;
+  background:var(--surface); border:2px solid var(--line); color:var(--muted);
+  font-weight:800; font-size:13px;
+  display:flex; align-items:center; justify-content:center;
+}
+.qopt.correct{ background:var(--goodSoft); border-color:var(--good); color:var(--ink); }
+.qopt.correct .ol{ background:var(--good); border-color:var(--good); color:#fff; }
+.qopt.wrong{ background:var(--badSoft); border-color:var(--bad); color:var(--ink); }
+.qopt.wrong .ol{ background:var(--bad); border-color:var(--bad); color:#fff; }
+.qopt.dim{ opacity:.5; }
+.fb-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; margin-top:8px; min-height:48px; }
+.fb-msg{ font-weight:800; font-size:14.5px; }
+.fb-msg.ok{ color:var(--good); }
+.fb-msg.no{ color:var(--bad); }
+.res-hero{ text-align:center; padding:28px 18px; }
+.res-verdict{ font-family:'Baloo 2',cursive; font-weight:800; font-size:24px; margin:14px 0 4px; }
+.res-sub{ color:var(--muted); font-size:14px; margin:0; }
+.res-chips{ display:flex; justify-content:center; gap:10px; margin-top:14px; flex-wrap:wrap; }
+.chip-stat{ padding:7px 15px; border-radius:999px; font-weight:800; font-size:13px; }
+.chip-stat.g{ background:var(--goodSoft); color:var(--good); }
+.chip-stat.b{ background:var(--badSoft); color:var(--bad); }
+.miss{ padding:12px 14px; border-radius:14px; background:var(--surface2); border-left:4px solid var(--bad); margin-bottom:10px; }
+.miss-ch{ font-size:11px; font-weight:800; letter-spacing:.06em; text-transform:uppercase; color:var(--muted); margin:0 0 3px; }
+.miss-q{ font-weight:700; color:var(--ink); font-size:14px; margin:0; }
+.miss-a{ font-size:13px; color:var(--muted); margin:5px 0 0; }
+.miss-a b{ color:var(--good); }
+
+/* ---------------- Progress ---------------- */
+.p-hero{ display:flex; align-items:center; gap:18px; flex-wrap:wrap; }
+.p-hero-t{ font-family:'Baloo 2',cursive; font-weight:800; font-size:20px; margin:0; }
+.p-hero-s{ color:var(--muted); font-size:13.5px; margin:4px 0 0; }
+.check-row{
+  display:flex; align-items:center; gap:11px; width:100%; text-align:left;
+  padding:10px 6px; border:0; border-bottom:1.5px dashed var(--line);
+  background:none; cursor:pointer;
+}
+.check-row:last-child{ border-bottom:0; }
+.cb{
+  width:24px; height:24px; flex:none; border-radius:8px;
+  border:2px solid var(--line); color:#fff; font-weight:800; font-size:13px;
+  display:flex; align-items:center; justify-content:center; transition:all .15s;
+}
+.check-row.on .cb{ background:var(--good); border-color:var(--good); }
+.cr-t{ font-weight:600; font-size:14.5px; color:var(--ink); }
+.cr-a{ font-size:11.5px; color:var(--muted); }
+.log-row{ display:flex; justify-content:space-between; align-items:center; gap:10px; padding:10px 4px; border-bottom:1.5px dashed var(--line); font-size:13.5px; }
+.log-row:last-child{ border-bottom:0; }
+.log-l{ font-weight:700; color:var(--ink); }
+.log-d{ color:var(--muted); font-size:12px; }
+.log-score{ font-weight:800; padding:4px 12px; border-radius:999px; font-size:12.5px; }
+.sp-note{ font-size:13.5px; color:var(--ink2); margin:6px 0 14px; }
+.sp-btns{ display:flex; flex-wrap:wrap; gap:10px; }
+#impCode{
+  width:100%; min-height:76px; margin-top:12px;
+  border:1.5px solid var(--line); border-radius:14px;
+  background:var(--surface2); color:var(--ink);
+  padding:10px 12px; font-size:12.5px; font-family:inherit; resize:vertical;
+}
+.danger{ margin-top:16px; padding-top:12px; border-top:1.5px dashed var(--line); }
+.link-danger{ background:none; border:0; color:var(--bad); font-weight:700; font-size:13.5px; cursor:pointer; }
+
+/* ---------------- Modal + toast + confetti ---------------- */
+.modal{
+  position:fixed; inset:0; z-index:120;
+  background:rgba(20,16,50,.55); backdrop-filter:blur(4px);
+  display:flex; align-items:center; justify-content:center; padding:20px;
+}
+.modal-card{
+  background:var(--surface); border-radius:24px; padding:24px;
+  max-width:400px; width:100%; text-align:center; box-shadow:var(--shadow);
+  animation:viewIn .22s ease;
+}
+.m-t{ font-family:'Baloo 2',cursive; font-weight:800; font-size:22px; margin:0; }
+.m-b{ color:var(--ink2); font-size:14.5px; margin:8px 0 18px; }
+.m-btns{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }
+.toast{
+  position:fixed; left:50%; bottom:calc(96px + env(safe-area-inset-bottom)); z-index:130;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--ink); color:var(--bg);
+  padding:11px 20px; border-radius:999px; font-weight:700; font-size:14px;
+  box-shadow:var(--shadow); opacity:0; pointer-events:none;
+  transition:opacity .25s, transform .25s;
+}
+.toast.show{ opacity:1; transform:translateX(-50%) translateY(0); }
+#confetti{ position:fixed; inset:0; z-index:140; pointer-events:none; }
+
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{ animation:none !important; transition:none !important; }
+}
+@media print{
+  .topbar, .navbar, .toast, .modal{ display:none !important; }
+  body{ background:#fff; }
+  .shell{ padding:0; }
+}
+</style>
+</head>
+
+<body>
+<canvas id="confetti" class="hidden" aria-hidden="true"></canvas>
+
+<header class="topbar">
+  <div class="tb-in">
+    <div class="logo">
+      <div class="logo-badge">🦩</div>
+      <div>
+        <div class="logo-txt">BoardReady <em>English</em></div>
+        <div class="logo-sub">Class XII · Flamingo + Vistas</div>
+      </div>
+    </div>
+    <div class="tb-right">
+      <input id="searchDesk" class="search-desk" type="search" placeholder="Search chapters, authors, themes..." oninput="setQuery(this.value)" aria-label="Search chapters">
+      <button id="themeBtn" class="icon-btn" onclick="toggleTheme()" aria-label="Toggle light and dark theme">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main class="shell">
+  <section id="view-home" class="view active" aria-label="Home">
+    <div id="homeBody"></div>
+  </section>
+
+  <section id="view-library" class="view" aria-label="Chapters">
+    <input id="searchMob" class="search-big" type="search" placeholder="Search chapters, authors, themes..." oninput="setQuery(this.value)" aria-label="Search chapters">
+    <div class="filters" id="filterPills"></div>
+    <div class="grid" id="chGrid"></div>
+    <p id="emptyMsg" class="empty hidden">Nothing matches. Try another word. 🔍</p>
+  </section>
+
+  <section id="view-reader" class="view" aria-label="Chapter reader">
+    <div id="readerBody"></div>
+  </section>
+
+  <section id="view-quiz" class="view" aria-label="Quiz">
+    <div id="quizBody"></div>
+  </section>
+
+  <section id="view-progress" class="view" aria-label="Progress">
+    <div id="progressBody"></div>
+    <div class="card" style="margin-top:16px">
+      <h3 class="sec-h" style="margin:0 0 4px">💾 Save your progress</h3>
+      <p class="sp-note">Progress auto-saves in this browser. To move it to another phone, laptop or browser, export it here and import it there. <strong id="saveStatus"></strong></p>
+      <div class="sp-btns">
+        <button class="btn btn-soft" onclick="exportFile()">⬇️ Export file</button>
+        <button class="btn btn-soft" onclick="copyCode()">📋 Copy backup code</button>
+        <label class="btn btn-soft" for="impFile" style="cursor:pointer">📥 Import file</label>
+        <input type="file" id="impFile" accept=".json,application/json,text/plain" class="hidden" onchange="importFile(this)">
+      </div>
+      <textarea id="impCode" placeholder="...or paste a backup code or exported text here" aria-label="Paste backup code"></textarea>
+      <button class="btn btn-primary" style="margin-top:12px" onclick="importCode()">Restore from pasted code</button>
+      <div class="danger">
+        <button class="link-danger" onclick="resetAllAsk()">🗑️ Reset all progress</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+<nav class="navbar" aria-label="Main navigation">
+  <button class="nav-btn active" data-view="home" onclick="switchView(this.dataset.view)"><span class="ic">🏠</span>Home</button>
+  <button class="nav-btn" data-view="library" onclick="switchView(this.dataset.view)"><span class="ic">📚</span>Chapters</button>
+  <button class="nav-btn" data-view="quiz" onclick="switchView(this.dataset.view)"><span class="ic">🎯</span>Quiz</button>
+  <button class="nav-btn" data-view="progress" onclick="switchView(this.dataset.view)"><span class="ic">📈</span>Progress</button>
+</nav>
+
+<div id="noteModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <h3 class="m-t" id="noteTitle"></h3>
+    <p class="m-b" id="noteBody"></p>
+    <div class="m-btns">
+      <button class="btn btn-primary" onclick="closeNote()">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div id="confirmModal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <h3 class="m-t" id="confirmTitle"></h3>
+    <p class="m-b" id="confirmBody"></p>
+    <div class="m-btns">
+      <button class="btn btn-soft" onclick="closeConfirm()">Cancel</button>
+      <button class="btn btn-primary" id="confirmOk" onclick="doConfirm()"></button>
+    </div>
+  </div>
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script>
+
+        /* ================= DATA ================= */
+        const studyDatabase = [
+            {
+                id: "ch-1",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 1",
+                title: "The Last Lesson",
+                author: "Alphonse Daudet",
+                theme: "Linguistic Chauvinism, Patriotism, and the Value of Mother Tongue",
+                quotes: [
+                    "\"When a people are enslaved, as long as they hold fast to their language it is as if they had the key to their prison.\"",
+                    "\"Vive La France! (Long Live France!)\""
+                ],
+                summary: "Set during the Franco-Prussian War (1870-1871) after France's defeat. The districts of Alsace and Lorraine passed into Prussian hands. The story emphasizes how cultural oppression hits deep through linguistic displacement.",
+                keyTerms: [
+                    { term: "Linguistic Chauvinism", definition: "An aggressive, exaggerated patriotism and belief in national dominance, forcing one's language onto others as seen in the Prussian decree." },
+                    { term: "The Bulletin Board", definition: "The central communication hub in town which, for two long years, was the bearer of all bad news: lost battles, conscription drafts, and command orders." }
+                ],
+                bulletNotes: [
+                    "<strong>Franz's Morning Reluctance:</strong> Franz is late, fears M. Hamel's scolding over Participles rules (which he knows nothing about). He considers bunking because of the temptingly sunny weather, chirping birds, and Prussian drill, but manages to resist.",
+                    "<strong>Sudden Silence:</strong> Unlike normal school days which are filled with loud desk slams, echoing lessons, and rulers banging tables, this morning is as quiet as a holy Sunday.",
+                    "<strong>The Classroom Transformation:</strong> Franz spots M. Hamel in his exquisite green coat, frilled shirt, and black silk cap (usually worn only on inspection/prize days). Furthermore, the usually empty back benches are occupied by sorrowful, silent village elders, including old Hauser, the former mayor, and former postmaster.",
+                    "<strong>The Shocking Announcement:</strong> M. Hamel declares that an order has arrived from Berlin to teach ONLY German in schools. This is their final French Lesson.",
+                    "<strong>Regret & Realization:</strong> Franz feels deeply ashamed for treating his studies lightly, chasing bird eggs, and sliding on the Saar. His massive books suddenly feel like cherished old friends.",
+                    "<strong>M. Hamel's Self-Reflection:</strong> Instead of scolding Franz when he stumbles over participles, M. Hamel laments that the entire region is guilty of postponing education. He honestly blames parents who preferred children to work on farms/mills and himself for sending children to water his gardens or declaring school holidays for his fishing trips.",
+                    "<strong>The Power of Native Tongue:</strong> Hamel highlights that French is the most beautiful, clearest, and logical language in the entire universe. It must be closely guarded.",
+                    "<strong>The Grand Dismissal:</strong> At the chime of noon and the blare of Prussian trumpets, a choked M. Hamel grabs a piece of chalk and writes with all his might: <span class='neon-highlight'>'Vive La France!'</span>."
+                ],
+                flowchartSteps: [
+                    "Franz runs late, notices unusual bulletin board crowd",
+                    "Classroom is dead silent as Sunday; village elders sit in back",
+                    "M. Hamel announces Berlin's brutal German-only decree",
+                    "Profound shock: Franz regrets neglecting his beautiful French lessons",
+                    "Hamel explains native language is the key out of prison",
+                    "Noon strikes; Hamel writes 'Vive La France' on board & dismisses class"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-blue" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="15" y="15" width="70" height="50" rx="3" fill="#1e293b"/>
+                        <path d="M25 25 L75 25 M25 35 L75 35 M25 45 L55 45" stroke="#fef08a"/>
+                        <path d="M25 55 L35 55" stroke="#4ade80"/>
+                        <rect x="40" y="70" width="20" height="20" fill="#f8fafc"/>
+                        <line x1="50" y1="65" x2="50" y2="70"/>
+                    </svg>
+                    <span class="doodle-caption">M. Hamel's Slate & Board</span>
+                `
+            },
+            {
+                id: "ch-2",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 2",
+                title: "Lost Spring",
+                author: "Anees Jung",
+                theme: "Stolen Childhood, Cyclical Poverty, and Institutional Apathy",
+                quotes: [
+                    "\"I want to drive a car.\"",
+                    "\"Survival in Seemapuri means rag picking.\"",
+                    "\"Is Saheb no longer his own master?\""
+                ],
+                summary: "Through raw snapshots of two children—Saheb-e-Alam (a Dhaka refugee in Seemapuri ragpicker slums) and Mukesh (a trapped child laborer in Firozabad glass industries)—Anees Jung unmasks the cruel social traps stealing youthful spring.",
+                keyTerms: [
+                    { term: "Seemapuri", definition: "A ghetto on the desolate periphery of Delhi, populated by over 10,000 squatting Bangladeshi refugees (who fled the 1971 war) living without sewage, running water, or real identity, but relying on grain ration cards." },
+                    { term: "Suhag", definition: "The auspicious status of an Indian married woman, symbolized by the very glass bangles produced in hazardous Firozabad cells under mind-numbing conditions." }
+                ],
+                bulletNotes: [
+                    "<strong>Saheb's Bitter Name Irony:</strong> Saheb's full name is <span class='neon-highlight'>'Saheb-e-Alam'</span>, which translates to 'Lord of the Universe'. In reality, he is a barefoot, destitute kid scrounging through trash heaps.",
+                    "<strong>Garbage Significance:</strong> To the helpless parents, garbage is raw, physical survival (bread and a leaking roof). To the wide-eyed children, it is wrapped in golden wonder—a magic chest where one might occasionally find a coin.",
+                    "<strong>The Loss of Freedom:</strong> Saheb gets a job at a local tea stall earning Rs. 800 and free meals. However, he loses his carefree charm. The heavy metal canister belongs to the shopkeeper, unlike the plastic bag which was entirely his own.",
+                    "<strong>Mukesh's Bold Defiance:</strong> Based in Firozabad, the glass-bangle hub of India, Mukesh actively dreams of breaking the family curse to become a motor mechanic, willing to walk miles to learn in a garage.",
+                    "<strong>Hazardous Firozabad Workspaces:</strong> 20,000+ children work illegally near white-hot glass furnace fires, in airless, dark, dingy cells, often sacrificing their eyesight before reaching adult age.",
+                    "<strong>The Ancestral Trap:</strong> Elders consider this misery their destiny ('Karma'), believing a family lineage of glasswork can never be broken. They've lived on starvation diets, never tasting one full meal.",
+                    "<strong>Vicious Social Network:</strong> The author suggests forming cooperatives, but the poor explain they are hounded, beaten, and dragged to jail by the police under the guidance of greedy middlemen, local politicians, and bureaucrats."
+                ],
+                flowchartSteps: [
+                    "Refugee children scrounge Seemapuri trash for basic survival",
+                    "Saheb gets tea stall job; trades his freedom for 800 Rupees",
+                    "Firozabad children labor in airless glass furnaces, losing eyesight",
+                    "Elders accept toxic work as destiny ('Karma') without protest",
+                    "Vicious circle of middlemen, police, and politicians blocks cooperatives",
+                    "Mukesh dares to dream, planning to walk to a garage to build cars"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-green" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="50" r="30" stroke-dasharray="4 4" stroke="currentColor"/>
+                        <circle cx="50" cy="50" r="22" stroke="currentColor"/>
+                        <circle cx="50" cy="50" r="14" stroke="currentColor"/>
+                        <path d="M50 10 L50 20 M50 80 L50 90 M10 50 L20 50 M80 50 L90 50" stroke="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">Hazardous Glass Bangles</span>
+                `
+            },
+            {
+                id: "ch-3",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 3",
+                title: "Deep Water",
+                author: "William Douglas",
+                theme: "Conquering Phobias, Unwavering Willpower, and Psychological Survival",
+                quotes: [
+                    "\"All we have to fear is fear itself.\"",
+                    "\"In death there is peace. There is terror only in the fear of death.\""
+                ],
+                summary: "An autobiographical account showing how William Douglas overcame a crippling, deep-seated water phobia. The text acts as an inspiring lesson on how systematic focus can shatter mental blockades.",
+                keyTerms: [
+                    { term: "Aversion", definition: "A strong, persistent feeling of intense dislike or fear. Douglas developed this early on due to a childhood accident on a California beach." },
+                    { term: "YMCA Pool", definition: "A swimming facility in Yakima, considered safe because it was only 2 to 3 feet deep at the shallow end with a gradual slope to 9 feet deep." }
+                ],
+                bulletNotes: [
+                    "<strong>Primary Trauma (Age 3-4):</strong> While standing with his father on a California beach, giant waves knocked Douglas down, sweeping over him and leaving him completely breathless.",
+                    "<strong>The YMCA Misadventure (Age 10-11):</strong> While waiting alone at the pool, a massive, muscular 18-year-old boy playfully tosses Douglas into the 9-foot deep end.",
+                    "<strong>The 9-Foot Descent:</strong> The journey down felt like ninety feet. His lungs felt ready to explode. He plans to hit the bottom, launch himself upward like a floating cork, lie flat, and paddle safely to the edge.",
+                    "<strong>Three Failed Strategies:</strong> Twice he struggled up but gasped only to swallow water. On the third descent, suffocating darkness overtook him. His legs turned into dead weights. Finally, all panic ceased; he fainted into peaceful darkness.",
+                    "<strong>The Long-Term Trauma:</strong> Saved from drowning, Douglas returns home weak and shaking. The fear ruins his fishing trips, canoe excursions, and boating activities for years.",
+                    "<strong>Systematic Training:</strong> On October 1st, Douglas hires a swimming instructor. He is attached to a pulley, rope, and overhead cable, practicing back and forth 5 days a week.",
+                    "<strong>Gradual Conquest:</strong> The instructor teaches him to exhale underwater and inhale by raising his nose. After months of practice, Douglas tests his courage at Lake Wentworth and Warm Lake. Shouting with joy, he conquers his fear."
+                ],
+                flowchartSteps: [
+                    "Early childhood: California waves sweep over 3-year-old Douglas",
+                    "Age 10: Tossed into 9-ft deep YMCA pool by an older bully",
+                    "Drowning experience: 3 descents under water, suffocates and faints",
+                    "Trauma persists: Water phobia ruins vacations, fishing, and boating",
+                    "Hires personal instructor; practices using rope, belt, and pulley systems",
+                    "Triumphant test: Swims across Lake Wentworth, shattering his fear"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-blue" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M10 40 Q 25 30, 40 40 T 70 40 T 100 40" stroke-linecap="round"/>
+                        <path d="M10 60 Q 25 50, 40 60 T 70 60 T 100 60" stroke-linecap="round"/>
+                        <path d="M30 20 L50 5 L70 20" stroke="currentColor" stroke-linejoin="round"/>
+                        <line x1="50" y1="5" x2="50" y2="75"/>
+                        <circle cx="50" cy="80" r="4" fill="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">Deep Pulley & Cable System</span>
+                `
+            },
+            {
+                id: "ch-4",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 4",
+                title: "The Rattrap",
+                author: "Selma Lagerlöf",
+                theme: "Redemptive Power of Human Kindness and the Worldly Traps of Greed",
+                quotes: [
+                    "\"The whole world is nothing but a big rattrap.\"",
+                    "\"The stranger had left a package for Edla... containing 30 Kronors and a letter signed as Captain von Stahle.\""
+                ],
+                summary: "A philosophical fairy tale featuring a cynical vagrant who views the world as a giant trap. Thanks to the unconditional trust and kindness shown by a young woman, he gets a chance to redeem his human soul.",
+                keyTerms: [
+                    { term: "Bait", definition: "Riches, joys, food, and shelter offered to lure humans into the trap, mirroring the cheese and pork inside a rattrap." },
+                    { term: "Ramsjö Ironworks", definition: "A large iron foundry where the shivering, desperate peddler seeks refuge, leading to his mistaken identity." }
+                ],
+                bulletNotes: [
+                    "<strong>Cynical Philosophy:</strong> A poor vagrant makes wire rattraps, begging and stealing to get by. He takes pleasure in imagining that the world's riches are merely bait to trap greed.",
+                    "<strong>Betraying the Crofter:</strong> A lonely old crofter invites the peddler inside, feeds him porridge, shares his tobacco, and plays cards. He proudly reveals his earnings of <span class='neon-highlight'>30 Kronors</span> from his cow's milk, storing it in a window pouch. The peddler returns next morning, steals the money, and flees.",
+                    "<strong>Trapped in the Woods:</strong> To avoid police, the thief runs through a dense, confusing forest. As night falls, he gets lost and realizes he has fallen into his own trap after taking the bait.",
+                    "<strong>The Ironmaster's Mistake:</strong> Seeking shelter at the Ramsjö Forge, the peddler is mistaken by the wealthy Ironmaster for an old army friend, Captain von Stahle.",
+                    "<strong>Edla's Compassionate Intervention:</strong> The peddler declines the Ironmaster's invitation out of fear. However, the daughter, Edla Willmansson, wins his trust with her gentle, non-judgmental warmth, persuading him to spend Christmas Eve with them.",
+                    "<strong>The Exposure:</strong> Once clean and dressed in fine clothes, the daylight reveals the mistake. The angry Ironmaster demands he leave, but Edla insists on hosting him. She wants to give a lonely wanderer one day of peaceful joy.",
+                    "<strong>Redemptive Transformation:</strong> After finding out at church that the peddler is a thief, Edla returns home worried. To her joy, the peddler has left behind a small gift: a rattrap containing the stolen 30 Kronors and a letter asking to return it to the crofter. He signs as Captain von Stahle, raised to nobility by her trust."
+                ],
+                flowchartSteps: [
+                    "Peddler invents philosophy of world being a giant rattrap",
+                    "Betrays a hospitable old crofter by stealing 30 Kronors",
+                    "Loses his way in the dark woods, realizing he has taken the bait",
+                    "Seeks shelter at Forge; Ironmaster mistakes him for an army friend",
+                    "Edla Willmansson's gentle kindness wins him over for Christmas",
+                    "Truth is exposed; Edla defends him, and he redeems himself as a Captain"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-black" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="20" y="30" width="60" height="40" rx="2" stroke-dasharray="3 3"/>
+                        <line x1="20" y1="50" x2="80" y2="50"/>
+                        <line x1="50" y1="30" x2="50" y2="70"/>
+                        <path d="M45 45 Q 50 35, 55 45" stroke="currentColor" stroke-width="3"/>
+                    </svg>
+                    <span class="doodle-caption">The Peddler's Rattrap Gift</span>
+                `
+            },
+            {
+                id: "ch-5",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 5",
+                title: "Indigo",
+                author: "Louis Fischer",
+                theme: "Leadership, Civil Disobedience, Self-Reliance, and Peasant Empowerment",
+                quotes: [
+                    "\"The battle of Champaran is won!\"",
+                    "\"What I did was a very ordinary thing. I declared that the British could not order me around in my own country.\""
+                ],
+                summary: "An analytical record of Mahatma Gandhi's first successful experiment with Civil Disobedience in Champaran in 1917. This struggle transformed a localized sharecropper dispute into a historic milestone for Indian Independence.",
+                keyTerms: [
+                    { term: "Sharecropping", definition: "A tenant farming system where Indian peasants were legally bound to plant 15% of their land with Indigo and hand over the entire harvest as rent." },
+                    { term: "Synthetic Indigo", definition: "A cheap chemical dye developed by Germany, which made natural indigo farming unprofitable and led British planters to demand exit compensation from illiterate peasants." }
+                ],
+                bulletNotes: [
+                    "<strong>Rajkumar Shukla's Determination:</strong> An illiterate but resolute peasant travels from Champaran to the 1916 Congress session in Lucknow. He follows Gandhi across India for weeks until Gandhi agrees to visit Patna.",
+                    "<strong>Initial Obstacles:</strong> In Patna, Rajendra Prasad's servants mistake Gandhi for an untouchable. He travels to Muzzafarpur, staying with government schoolteacher Prof. Malkani—a daring act under British rule.",
+                    "<strong>The Power of Conscience:</strong> Summoned to Motihari court for defying an order to leave, Gandhi is greeted by thousands of peasants. Baffled officials ask for his help to control the crowd. Gandhi pleads guilty, explaining he chose the voice of conscience over law.",
+                    "<strong>First Victory of Civil Disobedience:</strong> The case is dropped by the Lieutenant Governor. This is the first practical victory for non-violent resistance in modern India.",
+                    "<strong>The 25% Refund Compromise:</strong> An official commission is set up. Facing massive evidence, British planters offer a 25% refund, expecting Gandhi to demand 50%. Gandhi accepts immediately. He explains that reclaiming the peasants' pride was far more important than the actual cash.",
+                    "<strong>Social Reform in Villages:</strong> Gandhi stays for months, opening schools, improving sanitation with Kasturbai's help, and organizing medical aid.",
+                    "<strong>Self-Reliance:</strong> Gandhi refuses help from his English supporter Charles Freer Andrews, insisting that Indians must win their battle relying on their own strength."
+                ],
+                flowchartSteps: [
+                    "Rajkumar Shukla follows Gandhi across India to request help",
+                    "Gandhi travels to Patna and Muzzafarpur to gather peasant facts",
+                    "Summoned to Motihari court; thousands of peasants surround the building",
+                    "Gandhi disobeys the order to leave; British drop the case",
+                    "Commission set up; Gandhi accepts a 25% refund to win the peace",
+                    "Reforms Champaran villages and teaches self-reliance"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-green" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="50" cy="50" r="30" stroke="currentColor" stroke-width="2"/>
+                        <path d="M50 20 L50 80 M20 50 L80 50 M29 29 L71 71 M29 71 L71 29" stroke="currentColor"/>
+                        <circle cx="50" cy="50" r="8" fill="#1e293b"/>
+                    </svg>
+                    <span class="doodle-caption">Gandhi's Charkha Wheel</span>
+                `
+            },
+            {
+                id: "ch-6",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 6",
+                title: "Poets and Pancakes",
+                author: "Asokamitran",
+                theme: "Film Studio Culture, Bureaucracy, Ideological War, and Hidden Talent",
+                quotes: [
+                    "\"Pancake was the brand name of the make-up material that Gemini Studios bought in truck-loads.\"",
+                    "\"The lawyer lost his job because the poets were asked to go home.\""
+                ],
+                summary: "An entertaining, sarcastic look inside the legendary Gemini Studios of Madras during the post-independence years. It captures the unique characters, the rise of Subbu, political debates, and the visit of Stephen Spender.",
+                keyTerms: [
+                    { term: "Pancake", definition: "A famous, heavy makeup brand used in massive quantities to make actors look presentable under hot studio lights." },
+                    { term: "Kothamangalam Subbu", definition: "The resourceful No. 2 at Gemini Studios. Gifted, cheerful, and loyal, he was a poet, novelist, and actor who gave the studio its creative direction." }
+                ],
+                bulletNotes: [
+                    "<strong>The Fiery Makeup Room:</strong> Located in Clive's stables, the room is filled with hot, glaring lights. Applying makeup here is described as a 'fiery misery' for actors.",
+                    "<strong>Gemini's Makeup Hierarchy:</strong> A strict hierarchy is followed: the chief makeup artist handles lead actors, assistants handle support actors, and the Office Boy applies makeup to the crowd.",
+                    "<strong>The Frustrated Office Boy:</strong> A man in his late 40s who joined to become a star, writer, or director. He blames Subbu for his failure, constantly lecturing the author.",
+                    "<strong>Subbu's Creative Genius:</strong> A generous Brahmin who is always cheerful, even after flops. He is highly creative, offering multiple ways to shoot a scene instantly.",
+                    "<strong>The Story Department's Lawyer:</strong> Known as the 'legal adviser', he wears pants and a tie among Khadi-clad colleagues. He accidentally ruins a promising actress's career by secretly recording her tantrum. He loses his job when the department is closed.",
+                    "<strong>MRA & Communism:</strong> In 1952, Gemini hosts the 200-strong Moral Re-Armament Army (MRA). They perform anti-communist plays, while the local artists remain blissfully unaware of the politics.",
+                    "<strong>The Stephen Spender Mystery:</strong> English poet Stephen Spender visits the studio. His speech is incomprehensible due to his accent. Years later, the author finds Spender's essay in 'The God That Failed', finally solving the mystery."
+                ],
+                flowchartSteps: [
+                    "Inside Gemini Studios: Makeup room operates like a hot stable",
+                    "Office Boy blames Kothamangalam Subbu for his failed career",
+                    "Subbu's creative genius guides the studio's successful films",
+                    "Lawyer destroys an actress's career and loses his job as a result",
+                    "MRA group performs anti-communist plays for Madras audiences",
+                    "Stephen Spender visits; years later, his essay solves the mystery"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-blue" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polygon points="50,15 80,75 20,75" fill="#fef08a" stroke="currentColor"/>
+                        <circle cx="50" cy="50" r="10" fill="#f59e0b"/>
+                        <line x1="50" y1="15" x2="50" y2="5"/>
+                    </svg>
+                    <span class="doodle-caption">Blaring Studio Spotlights</span>
+                `
+            },
+            {
+                id: "ch-7",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 7",
+                title: "The Interview",
+                author: "Christopher Silvester",
+                theme: "The Art of Journalism, Personal Privacy, and Semiotics",
+                quotes: [
+                    "\"In some primitive cultures, it is believed that if one takes a photographic portrait of somebody, one is stealing that person's soul.\"",
+                    "\"I am a professor who writes novels on Sundays.\""
+                ],
+                summary: "An exploration of the history and differing views on the interview. The second part features an interview with Italian scholar Umberto Eco, showing how he balances academic work with successful fiction.",
+                keyTerms: [
+                    { term: "Semiotics", definition: "The academic study of signs and symbols, which was Umberto Eco's primary field of research." },
+                    { term: "Interstices", definition: "The tiny empty spaces in our daily lives and schedules. Eco utilizes these brief moments to write his novels." }
+                ],
+                bulletNotes: [
+                    "<strong>Differing Perspectives:</strong> Some view the interview as a source of truth and a modern art form. Celebrities, however, often see it as an unwanted intrusion into their personal lives.",
+                    "<strong>Famous Dislikes:</strong> V.S. Naipaul feels wounded by interviews; Lewis Carroll feared them; Rudyard Kipling called interviewing a punishable crime; and Saul Bellow described them as thumbprints on his windpipe.",
+                    "<strong>Umberto Eco's Academic Focus:</strong> A professor at the University of Bologna who identifies primarily as an academic, publishing novels only on weekends.",
+                    "<strong>The Secret of Interstices:</strong> Eco explains that he works in the brief gaps of time, such as writing a text while waiting for an elevator.",
+                    "<strong>The Name of the Rose:</strong> His historical novel sold over 10 million copies. It successfully combined metaphysics, theology, and medieval history within a detective plot.",
+                    "<strong>The Mystery of Success:</strong> Both the interviewer and Eco agree that the book's massive success is a mystery, likely due to it being published at the perfect time."
+                ],
+                flowchartSteps: [
+                    "130-year history: Interview becomes a key part of journalism",
+                    "Famous writers reject interviews, calling them intrusions",
+                    "Mukund Padmanabhan interviews world-renowned scholar Umberto Eco",
+                    "Eco explains his work on Semiotics and academic writing",
+                    "Reveals his secret: working in the 'interstices' of time",
+                    "The Name of the Rose achieves massive success against all odds"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-black" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="35" y="15" width="30" height="50" rx="15" fill="#f3f4f6" stroke="currentColor"/>
+                        <line x1="50" y1="65" x2="50" y2="85"/>
+                        <line x1="35" y1="85" x2="65" y2="85"/>
+                        <path d="M42 30 L58 30 M42 40 L58 40 M42 50 L52 50" stroke="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">Journalist's Microphone</span>
+                `
+            },
+            {
+                id: "ch-8",
+                book: "Flamingo",
+                type: "Prose",
+                chapterNo: "Chapter 8",
+                title: "Going Places",
+                author: "A.R. Barton",
+                theme: "Adolescent Fantasies, Hero Worship, and Working-Class Reality",
+                quotes: [
+                    "\"Sophie was a dreamer; Jansie was realistic.\"",
+                    "\"She saw him coming... Danny Casey, the brilliant Irish prodigy.\""
+                ],
+                summary: "This story explores adolescent daydreaming through Sophie, a working-class girl who escapes her dull life by inventing a romantic meeting with a famous soccer star, while her friend Jansie remains practical.",
+                keyTerms: [
+                    { term: "Apprentice Mechanic", definition: "Geoff's practical job, which contrasts sharply with Sophie's wild, glamorous fantasies." },
+                    { term: "Danny Casey", definition: "A brilliant young Irish football prodigy. He is the focus of Sophie's intense hero worship and fantasies." }
+                ],
+                bulletNotes: [
+                    "<strong>Sophie vs. Jansie:</strong> Sophie is an escapist who dreams of opening a boutique, managing a store, or becoming an actress. Jansie is a realist who knows they are destined for the local biscuit factory.",
+                    "<strong>Her Quiet Brother Geoff:</strong> An apprentice mechanic who speaks very little. Sophie is jealous of his silent world and invents stories to get his attention.",
+                    "<strong>The Danny Casey Fantasy:</strong> Sophie tells Geoff she met Danny Casey at Royce's shop window, claiming he promised to meet her again for an autograph.",
+                    "<strong>The Family's Football Passion:</strong> The family travels to watch their team, United, win thanks to Casey's brilliant goal.",
+                    "<strong>The Painful Lie:</strong> Sophie tells Jansie about the meeting, asking her to keep it a secret. She begins to believe her own lie.",
+                    "<strong>Waiting by the Canal:</strong> She sits on a bench by the dark canal, waiting for Casey. As hours pass, she realizes he is not coming and feels the heavy burden of her doubts.",
+                    "<strong>Living in Dreams:</strong> Despite her disappointment, she retreats into her fantasy, imagining his green eyes and swift movements on the field."
+                ],
+                flowchartSteps: [
+                    "Sophie daydreams of luxury while Jansie accepts their factory future",
+                    "Sophie invents a romantic meeting with soccer star Danny Casey",
+                    "Shares the lie with her quiet brother Geoff to win his attention",
+                    "The family celebrates United's victory on Saturday afternoon",
+                    "Sophie tells Jansie, further building her fantasy world",
+                    "Waits by the lonely canal, facing the sad reality of her dreams"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-green" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="50" r="30" fill="#f0fdf4" stroke="currentColor"/>
+                        <path d="M26 35 C 35 45, 65 45, 74 35 M26 65 C 35 55, 65 55, 74 65 M50 20 L50 80" stroke="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">Sophie's Fantasy Football</span>
+                `
+            },
+            {
+                id: "po-1",
+                book: "Flamingo",
+                type: "Poetry",
+                chapterNo: "Poem 1",
+                title: "My Mother at Sixty-Six",
+                author: "Kamala Das",
+                theme: "Ageing, the fear of losing a parent, and love expressed through composure",
+                quotes: [
+                    "The dozing mother, mouth open, is compared to a corpse: ashen, still, drained of life.",
+                    "Outside the car, young trees seem to sprint past and children spill out of their homes: images bursting with the energy the mother has lost.",
+                    "At the airport gate the mother looks pale and dim, likened to a late winter's moon nearing the end of its cycle.",
+                    "The poem ends on a smile repeated three times: a brave mask pulled over the old ache of separation."
+                ],
+                summary: "During a Friday morning drive to the Cochin airport, the poet notices her dozing mother's pale, corpse-like face and is stabbed by her old childhood fear of losing her. She steadies herself with the lively images outside the window, and at the security gate hides her ache behind a cheerful goodbye and smile after smile.",
+                keyTerms: [
+                    { term: "Simile", definition: "The mother's face is compared first to a corpse and later to a late winter's moon: two images of fading life." },
+                    { term: "Juxtaposition", definition: "Sprinting young trees and merry children are set against the still, ageing mother: youth placed beside decay." },
+                    { term: "Repetition", definition: "The word smile repeats at the close, showing deliberate effort to bury pain under cheerfulness." },
+                    { term: "Single-sentence form", definition: "The whole poem runs as one long sentence, mirroring one continuous, unbroken wave of thought and fear." }
+                ],
+                bulletNotes: [
+                    "Setting: a car ride to <strong>Cochin airport</strong> on a Friday morning; the poet's mother dozes beside her, mouth open.",
+                    "Her face looks <span class='neon-highlight'>ashen like a corpse</span>: the first shock of truly seeing her mother's old age.",
+                    "The poet deliberately looks away at <strong>young trees sprinting</strong> and <strong>children spilling out of their homes</strong>: symbols of youth, motion and life.",
+                    "At the security check the mother appears again, wan and pale as a <span class='neon-highlight'>late winter's moon</span>: distant, dim, near the end of a cycle.",
+                    "What returns is her <strong>old, familiar childhood fear</strong>: the terror of separation from and loss of her mother.",
+                    "All she says is <strong>see you soon, Amma</strong>, and she smiles and smiles and smiles: love offered as reassurance, grief kept private.",
+                    "Board angle: the two similes, the contrast of images, and why the smile is repeated are the most asked questions."
+                ],
+                flowchartSteps: [
+                    "Drive to the airport; mother dozes",
+                    "Corpse-like face triggers old pain",
+                    "Poet turns to trees and children outside",
+                    "Airport goodbye; the moon simile returns",
+                    "Fear hidden behind repeated smiles"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-amber' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><path d='M63 15a37 37 0 1 0 0 70 29 29 0 1 1 0-70z'/><path d='M22 26h6M25 23v6'/><path d='M80 62h6M83 59v6'/></svg><span class='doodle-caption'>a late winter moon</span>"
+            },
+            {
+                id: "po-2",
+                book: "Flamingo",
+                type: "Poetry",
+                chapterNo: "Poem 2",
+                title: "Keeping Quiet",
+                author: "Pablo Neruda",
+                theme: "Stillness and self-reflection as the cure for violence, greed and haste",
+                quotes: [
+                    "The count to twelve suggests the hours on a clock face: one small, measurable moment the whole world can share.",
+                    "The fisherman pausing in the cold sea and the salt gatherer looking at his hurt hands: labour suspended long enough to notice its own cost.",
+                    "Those preparing wars against nature and wars with gas and fire would put on clean clothes and simply walk with their brothers.",
+                    "The earth is the final teacher: under what looks dead in winter, life quietly waits."
+                ],
+                summary: "Neruda invites everyone on earth to count to twelve and keep still: no languages, no engines, no rushing. In that shared silence the fisherman would spare the whale, the salt gatherer would rest his wounded hands, and war-makers would walk in the shade with their brothers. This stillness is not death, he insists; the wintering earth proves that what seems still can be deeply alive.",
+                keyTerms: [
+                    { term: "Symbolism", definition: "Twelve stands for the hours of the clock and the measure of a day: time itself pausing for one moment." },
+                    { term: "Paradox", definition: "The poet asks for total stillness yet insists this is not death; it is the most alive form of attention." },
+                    { term: "Imagery", definition: "Fishermen and whales, hurt hands in the salt, clean clothes after war: concrete pictures of harm interrupted." },
+                    { term: "Direct address", definition: "The poem speaks to all of us at once, making every reader a participant in the exotic moment." }
+                ],
+                bulletNotes: [
+                    "The invitation: <strong>count to twelve and keep still</strong>: a tiny, doable act asked of the entire planet at once.",
+                    "Silence here means <span class='neon-highlight'>no languages, no engines, no rush</span>: for one moment we would all feel strange and together.",
+                    "<strong>Fishermen would not harm whales</strong>, and the man <strong>gathering salt</strong> would finally look at his hurt hands: work paused for reflection.",
+                    "Those who prepare <strong>wars against nature, wars with gas, wars with fire</strong> would put on clean clothes and walk with their brothers: a victory with no survivors is exposed as meaningless.",
+                    "Careful clarification: <span class='neon-highlight'>stillness is not total inactivity or death</span>; it interrupts the sadness of never understanding ourselves.",
+                    "The <strong>earth is the teacher</strong>: in apparent winter deadness, seeds and roots stay alive; quiet can hold life.",
+                    "Board angle: what counting to twelve symbolises, examples of harmful activity, and how stillness differs from death."
+                ],
+                flowchartSteps: [
+                    "Invitation: count to twelve, be still",
+                    "All languages and engines stop",
+                    "Fisherman, salt gatherer, war-makers pause",
+                    "Clarification: this is not death",
+                    "Earth proves quiet things stay alive"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-green' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round'><circle cx='50' cy='54' r='32'/><path d='M50 54V32'/><path d='M50 54l10-8'/><path d='M50 12v6'/><path d='M44 10h12'/></svg><span class='doodle-caption'>count to twelve</span>"
+            },
+            {
+                id: "po-3",
+                book: "Flamingo",
+                type: "Poetry",
+                chapterNo: "Poem 3",
+                title: "A Thing of Beauty",
+                author: "John Keats",
+                theme: "Beauty as a permanent source of joy that shelters us from life's gloom",
+                quotes: [
+                    "The opening claim: anything beautiful is a joy that lasts for ever; its loveliness keeps increasing and never fades into nothingness.",
+                    "Beauty's gifts are gentle and physical: a shaded resting place, sleep full of sweet dreams, health and quiet breathing.",
+                    "The catalogue of beauty: sun, moon, trees old and young, daffodils, clear streams and the musk-rose blooming deep in the forest.",
+                    "Joy from beauty pours on us like an endless fountain of immortal drink from the edge of heaven."
+                ],
+                summary: "In this extract from the opening of Endymion, Keats declares that a beautiful thing is a joy for ever: its loveliness grows and never dies. Human life is full of despondence, cruelty and gloomy days, yet beauty lifts the dark pall from our spirits. Nature's simple sights, the grandeur of the mighty dead and every lovely tale we have heard or read pour into us like an endless, divine fountain of joy.",
+                keyTerms: [
+                    { term: "Metaphor", definition: "Joy from beauty is an endless fountain of immortal drink: a divine, inexhaustible gift; sorrow is a pall, a funeral cloth, that beauty lifts away." },
+                    { term: "Imagery", definition: "A shady bower for sleep, daffodils in green surroundings, cooling streams against the hot season, musk-roses in the forest." },
+                    { term: "Alliteration", definition: "Soft sound pairings such as noble natures, and the image of a flowery band that ties us to the earth." },
+                    { term: "Allusion", definition: "The grandeur of the mighty dead recalls great heroes honoured in legend, imagined as beautiful even in death." }
+                ],
+                bulletNotes: [
+                    "Source: the opening lines of <strong>Endymion</strong> (1818); the extract carries Keats's core belief in the permanence of beauty.",
+                    "A beautiful thing never <span class='neon-highlight'>passes into nothingness</span>: its loveliness keeps increasing in the mind that holds it.",
+                    "Beauty's gifts are concrete: a <strong>quiet bower</strong>, <strong>sweet sleep</strong>, good health and calm breathing.",
+                    "Keats admits life's dark side: despondence, a shortage of noble natures, gloomy days and unhealthy, over-darkened ways: yet <span class='neon-highlight'>beauty moves the pall away</span> from our dark spirits.",
+                    "His catalogue of beauty spans nature and humanity: <strong>sun, moon, trees, daffodils, clear rills, musk-rose blooms</strong>, the mighty dead, and all the lovely tales we have heard or read.",
+                    "Every such joy is a <strong>flowery band</strong> binding us to the earth: beauty is the reason we stay in love with life despite suffering.",
+                    "Board angle: the list of beautiful things, the fountain metaphor, and how beauty counters human suffering."
+                ],
+                flowchartSteps: [
+                    "Claim: beauty is a joy for ever",
+                    "Beauty's gifts: bower, sleep, health",
+                    "The gloom of human life admitted",
+                    "Nature and noble legacies as beauty",
+                    "An endless fountain of joy from heaven"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-amber' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><path d='M50 92V56'/><path d='M50 78c-10-2-16-8-18-16 10 0 16 6 18 16z'/><circle cx='50' cy='40' r='7'/><path d='M50 20v8M64 26l-6 6M70 40h-8M64 54l-6-6M36 26l6 6M30 40h8M36 54l6-6'/></svg><span class='doodle-caption'>a joy that grows</span>"
+            },
+            {
+                id: "po-4",
+                book: "Flamingo",
+                type: "Poetry",
+                chapterNo: "Poem 4",
+                title: "A Roadside Stand",
+                author: "Robert Frost",
+                theme: "Rural poverty, urban indifference and the hollow promises of the powerful",
+                quotes: [
+                    "A little new shed stretches pathetically at the edge of the road, pleading not for bread but for a little of the city's money.",
+                    "The passing cars, if they stop at all, grumble that the badly painted signs spoil the landscape, or ask only for directions or a gallon of gas.",
+                    "Frost's famous oxymorons brand the so-called helpers as greedy good-doers and beneficent beasts of prey swarming over rural lives.",
+                    "The poet's darkest moment: the endless waiting is so unbearable that he briefly wishes the villagers' misery ended at one stroke, then turns the thought back on himself."
+                ],
+                summary: "A small new shed beside an old farmhouse begs the passing city traffic for a little money, the flow of cash that keeps city life comfortable. The polished cars sweep past with their minds elsewhere, or stop only to complain. Frost aches at the farmers' childish, endless waiting and rages at the calculating agencies whose promised help would rob the poor of their independence and their peace of mind.",
+                keyTerms: [
+                    { term: "Transferred epithet", definition: "The polished traffic: the polish belongs to the cars, but the phrase colours the city people's slick indifference." },
+                    { term: "Oxymoron", definition: "Greedy good-doers and beneficent beasts of prey: kindness worn as a mask by exploiters." },
+                    { term: "Irony", definition: "The promised resettlement beside theatre and store would soothe the villagers out of thinking for themselves, not lift them up." },
+                    { term: "Imagery", definition: "Wild berries in wooden quarts and crook-necked golden squash: the small, real goods the stand actually offers." }
+                ],
+                bulletNotes: [
+                    "The stand offers <strong>wild berries and golden squash</strong>, but what its owners truly crave is <span class='neon-highlight'>a share of the city money</span> that supports city life.",
+                    "The <strong>polished traffic</strong> passes with its mind ahead; the rare car that stops complains that the signs mar the scenery, or wants directions or a gallon of gas.",
+                    "The open window's real sadness is the <span class='neon-highlight'>childish longing in vain</span>: waiting all day for cars that almost never stop to buy.",
+                    "The news says these people will be bought out and resettled beside <strong>theatre and store</strong>: comfort designed by others, priced at their self-reliance.",
+                    "<strong>Greedy good-doers</strong> and <strong>beneficent beasts of prey</strong>: Frost's harshest labels for agencies that enforce benefits on the poor while destroying their old, calm way of life.",
+                    "The poet's anguish peaks in a fleeting wish to end the villagers' pain at one stroke, instantly checked: would anyone offer him the same relief from his own pain?",
+                    "Board angle: the two oxymorons, the transferred epithet, what the country folk really want, and the poem's social criticism."
+                ],
+                flowchartSteps: [
+                    "A new shed pleads at the highway's edge",
+                    "Polished traffic passes or complains",
+                    "The real craving: a little city money",
+                    "False promises of resettlement",
+                    "The poet's rage, pity and self-check"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-blue' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><path d='M18 40l8-14h48l8 14z'/><path d='M18 40h64'/><path d='M26 40v34M74 40v34'/><path d='M26 74h48'/><path d='M40 54h20v20H40z'/></svg><span class='doodle-caption'>waiting by the highway</span>"
+            },
+            {
+                id: "po-5",
+                book: "Flamingo",
+                type: "Poetry",
+                chapterNo: "Poem 5",
+                title: "Aunt Jennifer's Tigers",
+                author: "Adrienne Rich",
+                theme: "A woman crushed by marriage creates in art the fearless freedom she never lived",
+                quotes: [
+                    "The embroidered tigers are bright topaz creatures of a green world, pacing with sleek chivalric certainty, unafraid of the men beneath the tree.",
+                    "Aunt Jennifer's fingers flutter through the wool; even pulling the ivory needle feels hard for her.",
+                    "The massive weight of the wedding band sits heavily on her hand: marriage felt as a burden she cannot lift.",
+                    "Even in death her terrified hands will stay ringed by the ordeals that mastered her, while her tigers prance on, proud and unafraid."
+                ],
+                summary: "Aunt Jennifer embroiders tigers that prance across her panel: bright, confident, fearless of the men standing under the tree. Her own fingers flutter under the crushing weight of her husband's wedding band. When she dies, her frightened hands will still carry the ring of the ordeals that ruled her life, but the tigers she created will go on prancing, proud and unafraid: art outliving the artist's fear.",
+                keyTerms: [
+                    { term: "Symbolism", definition: "The tigers stand for the courage and freedom Aunt Jennifer craves; the wedding band stands for the crushing control of patriarchal marriage." },
+                    { term: "Contrast", definition: "Fearless, prancing tigers against fluttering, terrified fingers: the artwork against the artist's life." },
+                    { term: "Alliteration", definition: "Soft repeated sounds, as in fingers fluttering, echo her nervousness; the tigers' movement rings bold and rhythmic." },
+                    { term: "Irony", definition: "Even death does not free her from the ring's ordeals, yet her art outlives and outshines the fear she lived in." }
+                ],
+                bulletNotes: [
+                    "Aunt Jennifer embroiders <strong>tigers across a panel</strong>: bright topaz beasts in a world of green, with no fear of the men beneath the tree.",
+                    "Her <strong>fingers flutter</strong> through the wool; even the ivory needle is hard to pull: fear has settled into her body.",
+                    "The <span class='neon-highlight'>massive weight of the wedding band</span> is the poem's central symbol: not the ring's grams but the marriage's crushing demands.",
+                    "The last stanza looks ahead: when she dies, her <strong>terrified hands</strong> will still be ringed by the ordeals she was <strong>mastered</strong> by.",
+                    "Her tigers, though, will go on prancing, <span class='neon-highlight'>proud and unafraid</span>: art preserves the self that life suppressed.",
+                    "Context: Rich published the poem in 1951; it is widely read as an early feminist text about invisible domestic oppression.",
+                    "Board angle: what the tigers and the ring symbolise, the stanza-wise contrast, and why the tigers outlive Aunt Jennifer."
+                ],
+                flowchartSteps: [
+                    "Tigers prance, bright and fearless",
+                    "Her fingers flutter under the ring's weight",
+                    "Death will not unring her hands",
+                    "The tigers prance on: art outlives fear"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-amber' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round'><ellipse cx='50' cy='64' rx='16' ry='13'/><circle cx='28' cy='44' r='7'/><circle cx='43' cy='34' r='7'/><circle cx='58' cy='34' r='7'/><circle cx='72' cy='44' r='7'/></svg><span class='doodle-caption'>the tigers prance on</span>"
+            },
+            {
+                id: "ch-9",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 1",
+                title: "The Third Level",
+                author: "Jack Finney",
+                theme: "Escapism from Modern Stress, Nostalgia, and Psychological Refuge",
+                quotes: [
+                    "\"The third level is a convenient escape from the harsh realities of the modern world.\"",
+                    "\"The note was signed by Sam: 'Charley, keep looking till you find the third level! It's worth it...'\""
+                ],
+                summary: "Charley, an ordinary clerk, discovers a mysterious 19th-century terminal at Grand Central Station. This 'Third Level' represents a psychological escape from the stress, war, and insecurity of the modern era.",
+                keyTerms: [
+                    { term: "First-Day Cover", definition: "An envelope with a new stamp mailed by collectors to themselves on the first day of sale. It is left blank and remains unopened." },
+                    { term: "Galesburg, Illinois", definition: "A peaceful, green 1894 town free from the horrors of the World Wars, representing Charley's ultimate dream of safety." }
+                ],
+                bulletNotes: [
+                    "<strong>The Two Levels:</strong> Station presidents insist there are only two levels at Grand Central, but 31-year-old Charley claims to have visited the third.",
+                    "<strong>Psychiatric Diagnosis:</strong> His friend Sam describes it as a 'waking-dream wish fulfillment' triggered by the fear and insecurity of modern life.",
+                    "<strong>The Discovery:</strong> Taking a wrong turn in a tunnel, Charley finds smaller rooms, fewer gates, open-flame gas lights, and travelers dressed in 1890s fashion.",
+                    "<strong>The Newspaper Proof:</strong> He spots 'The World' newspaper dated <span class='neon-highlight'>June 1, 1894</span>, featuring stories on President Cleveland.",
+                    "<strong>The Ticket Window:</strong> Charley tries to buy two tickets to Galesburg, but the clerk rejects his modern currency, warning him of arrest.",
+                    "<strong>Buying Old Currency:</strong> He withdraws his savings to buy 1890s currency at a loss, but can never find the entrance tunnel again.",
+                    "<strong>Sam's Mysterious Escape:</strong> His psychiatrist friend Sam disappears. Charley finds a first-day cover from 1894 addressed to his grandfather, containing a letter from Sam confirming he found the third level and is happily settled in Galesburg."
+                ],
+                flowchartSteps: [
+                    "Charley claims Grand Central has a hidden 3rd Level",
+                    "His psychiatrist calls it an escape from modern worries",
+                    "Charley takes a wrong turn and steps into the year 1894",
+                    "Spots a historical newspaper and tries to buy tickets to Galesburg",
+                    "His modern money is rejected; he retreats to avoid arrest",
+                    "Sam disappears, leaving an 1894 letter confirming his escape"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-blue" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="50" r="35" stroke="currentColor"/>
+                        <path d="M50 15 L50 50 L75 50" stroke="currentColor" stroke-linecap="round"/>
+                        <path d="M50 15 L50 20 M85 50 L80 50 M50 85 L50 80 M15 50 L20 50" stroke="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">Grand Central Clock (1894)</span>
+                `
+            },
+            {
+                id: "ch-10",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 2",
+                title: "The Tiger King",
+                author: "Kalki",
+                theme: "Humor, Satire on Power, and the Irony of Fate",
+                quotes: [
+                    "\"Let tigers beware!\"",
+                    "\"In this manner, the hundredth tiger took its final revenge upon the Tiger King.\""
+                ],
+                summary: "A sharp satire about Jilani Jung Jung Bahadur, the Maharaja of Pratibandapuram. He tries to defy an astrologer's prediction of death by killing 100 tigers, only to be undone by a cheap wooden toy.",
+                keyTerms: [
+                    { term: "The 100th Tiger", definition: "The focus of the king's obsession. It faints from the gunshot and is secretly killed by the hunters to protect their jobs." },
+                    { term: "The Toy Tiger", definition: "A cheap wooden toy with rough slivers that infects the king, fulfilling the prophecy of his death." }
+                ],
+                bulletNotes: [
+                    "<strong>The 10-Day Miracle:</strong> The infant prince miraculously speaks, asking the prophets to explain the manner of his death. The astrologer predicts death by a tiger.",
+                    "<strong>The Royal Vow:</strong> Upon taking the throne, the king bans all tiger hunting except by himself, vowing to kill 100 tigers to prove the prophecy wrong.",
+                    "<strong>The British Officer Crisis:</strong> He refuses to let a British officer hunt, saving his kingdom by sending 50 diamond rings worth Rs. 3 lakhs to the officer's wife.",
+                    "<strong>The Royal Marriage:</strong> After exhausting the tiger population in his state, he marries a princess whose kingdom has a large tiger population to continue his hunt.",
+                    "<strong>The 100th Tiger Mystery:</strong> Unable to find the final tiger, he threatens his Dewan. The Dewan secretly imports an old tiger from Madras, which faints when the king fires. The hunters kill it themselves to hide the truth.",
+                    "<strong>The Birthday Gift:</strong> The king buys a rough wooden toy tiger for his son's third birthday.",
+                    "<strong>The Fateful Sliver:</strong> A tiny sliver of wood pierces his right hand, causing a severe infection. Three famous surgeons operate, but the king dies, fulfilling his destiny."
+                ],
+                flowchartSteps: [
+                    "Infant prince speaks, hearing the prophecy of his death by a tiger",
+                    "Takes the throne and bans tiger hunting throughout his kingdom",
+                    "Bribes a British officer's wife to protect his throne from interference",
+                    "Marries a princess to hunt tigers in her father's territory",
+                    "Shoots the 100th tiger, unaware that it merely fainted",
+                    "Dies from a toy tiger infection, fulfilling the prophecy of fate"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-amber" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="45" r="25" stroke="currentColor"/>
+                        <path d="M35 35 Q 40 45, 45 35 M55 35 Q 60 45, 65 35" stroke="currentColor"/>
+                        <path d="M40 55 Q 50 65, 60 55" stroke="currentColor"/>
+                        <path d="M30 25 L35 15 L45 22 M70 25 L65 15 L55 22" stroke="currentColor"/>
+                    </svg>
+                    <span class="doodle-caption">The Toy Tiger</span>
+                `
+            },
+            {
+                id: "ch-11",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 3",
+                title: "Journey to the End of the Earth",
+                author: "Tishani Doshi",
+                theme: "Environmental Protection, Earth's History, and Global Warming",
+                quotes: [
+                    "\"If you want to understand the earth's past, present and future, Antarctica is the place to go.\"",
+                    "\"Take care of the small things and the big things will fall into place.\""
+                ],
+                summary: "The author joins the 'Students on Ice' expedition to Antarctica. The trip offers a stark warning about global warming and shows how minor changes in delicate ecosystems can have global impacts.",
+                keyTerms: [
+                    { term: "Gondwana", definition: "The ancient supercontinent that existed 650 million years ago, which later broke apart to form today's continents." },
+                    { term: "Students on Ice", definition: "An educational program that takes high school students to polar regions, inspiring the next generation of environmental leaders." }
+                ],
+                bulletNotes: [
+                    "<strong>The Long Journey:</strong> The author travels for over 100 hours by car, plane, and ship, crossing 9 time zones and 3 oceans to reach Antarctica.",
+                    "<strong>The White Silence:</strong> Upon arrival, she is struck by the endless white landscape and profound, peaceful silence.",
+                    "<strong>The History of Gondwana:</strong> 650 million years ago, India and Antarctica were part of a single, warm landmass with rich flora and fauna.",
+                    "<strong>Human Environmental Impact:</strong> In just 12,000 years, humanity has depleted natural resources, creating a blanket of carbon dioxide that drives global warming.",
+                    "<strong>Delicate Polar Ecosystems:</strong> Antarctica's simple food chain is highly sensitive. Changes in temperature can disrupt microscopic phytoplankton, which support all marine life in the region.",
+                    "<strong>Walking on Ice:</strong> Walking on the frozen ocean surface makes the author appreciate the balance and scale of our planet.",
+                    "<strong>A Call to Action:</strong> Seeing melting glaciers firsthand inspires the young students to protect the Earth's climate."
+                ],
+                flowchartSteps: [
+                    "Author travels 100 hours to reach the frozen continent of Antarctica",
+                    "Reflects on Gondwana, the ancient supercontinent of 650 million years ago",
+                    "Observes how human activity has disrupted the global climate",
+                    "Studies phytoplankton to see how temperature changes impact ecosystems",
+                    "Walks on the frozen ocean, appreciating the planet's balance",
+                    "Students return inspired to lead future environmental policies"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-blue" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="50,15 90,80 10,80" fill="#f0f9ff" stroke="currentColor" stroke-width="2.5"/>
+                        <polygon points="65,40 90,80 40,80" fill="#e0f2fe" stroke="currentColor"/>
+                        <circle cx="50" cy="30" r="3" fill="#38bdf8"/>
+                    </svg>
+                    <span class="doodle-caption">Antarctic Glaciers</span>
+                `
+            },
+            {
+                id: "ch-12",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 4",
+                title: "The Enemy",
+                author: "Pearl S. Buck",
+                theme: "Humanitarian Duty vs. National Loyalty, and Post-War Reconciliation",
+                quotes: [
+                    "\"My heads and hands were moving in different directions.\"",
+                    "\"Sadao had been trained so that he could not let a man die if he could help it.\""
+                ],
+                summary: "During World War II, a Japanese surgeon finds an injured American soldier washed ashore. He faces a deep moral conflict, torn between his professional duty to save lives and his patriotic duty to his country.",
+                keyTerms: [
+                    { term: "Dr. Sadao Hoki", definition: "A skilled Japanese surgeon and scientist who studied in America, torn between his medical oath and national loyalty." },
+                    { term: "Tom (POW)", definition: "An injured American prisoner of war who escapes from prison and washes up on the beach near Sadao's home." }
+                ],
+                bulletNotes: [
+                    "<strong>Washed Ashore:</strong> Dr. Sadao and his wife Hana find an unconscious, bleeding American soldier on the beach near their home.",
+                    "<strong>The Deep Dilemma:</strong> Helping him could lead to their arrest for treason, while handing him over to the military means certain death.",
+                    "<strong>Medical Duty First:</strong> Sadao's medical training prevails. He carries the soldier into his father's room and prepares to operate.",
+                    "<strong>The Servants' Rebellion:</strong> Terrified of punishment, the old gardener, cook, and maid Yumi refuse to help and eventually leave the house in protest.",
+                    "<strong>Hana's Quiet Strength:</strong> Hana supports her husband, washing the soldier and administering the anesthetic despite her fear.",
+                    "<strong>The General's Secret Deal:</strong> Sadao informs the ailing General. To protect Sadao, the General offers to send private assassins to kill the soldier quietly, but later forgets due to his poor health.",
+                    "<strong>The Escape:</strong> Tired of the anxiety, Sadao provides the soldier with a boat, food, water, and a flashlight, helping him escape to a safe island where he can signal a passing Korean fishing boat."
+                ],
+                flowchartSteps: [
+                    "Dr. Sadao and Hana find an injured American POW on the beach",
+                    "Faced with a moral dilemma, Sadao chooses his medical oath over politics",
+                    "The servants leave the house in protest of harboring an enemy",
+                    "Sadao operates successfully with Hana's courageous assistance",
+                    "The General promises to send private assassins but forgets to do so",
+                    "Sadao helps the soldier escape safely on a fully stocked boat"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-black" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <circle cx="50" cy="50" r="35" stroke="currentColor"/>
+                        <line x1="50" y1="25" x2="50" y2="75"/>
+                        <line x1="25" y1="50" x2="75" y2="50"/>
+                        <rect x="42" y="42" width="16" height="16" fill="#ef4444" stroke="none"/>
+                    </svg>
+                    <span class="doodle-caption">Sadao's Medical Oath</span>
+                `
+            },
+            {
+                id: "vn-5",
+                book: "Vistas",
+                type: "Supplementary",
+                chapterNo: "Chapter 5",
+                title: "On the Face of It",
+                author: "Susan Hill",
+                theme: "Appearance versus essence: acceptance, not pity, is what heals the wounded",
+                quotes: [
+                    "Derry has memorised every reaction to his burnt face: the stares, the whispers, even kisses aimed only at the unburnt cheek.",
+                    "Mr Lamb's creed: the gate is always open, everything that grows is a plant, and whether bees buzz or sing depends on the listener.",
+                    "Lamb's cautionary tale: a man so afraid of everything locked himself in his room, and a picture fell off the wall and killed him.",
+                    "Lamb on bitterness: acid burnt one side of a face, but hatred can burn a person away from the inside."
+                ],
+                summary: "A play in two scenes. Derry, fourteen, one side of his face burnt by acid, has learnt to expect fear, pity and cruel whispers. He climbs into old Mr Lamb's garden and meets a man with a tin leg who keeps his gate open, welcomes weeds as plants and hears bees sing. Lamb's talk turns Derry from bitterness toward curiosity. Derry defies his mother to come back, only to find Lamb fallen from the apple ladder; but the change in the boy has already taken root.",
+                keyTerms: [
+                    { term: "Mr Lamb", definition: "An old man with a tin leg, mocked by children as Lamey-Lamb; lives alone with open gates and no curtains: openness as a philosophy of life." },
+                    { term: "Derry", definition: "A withdrawn fourteen-year-old whose acid-burnt face has taught him to expect fear and pity, never friendship." },
+                    { term: "The locked-room story", definition: "Lamb's parable of the man who feared everything: fear itself, not danger, is what destroys a life." },
+                    { term: "Structure", definition: "Scene one: the meeting in the garden. Scene two: Derry's argument with his mother and his return to find Lamb fallen." }
+                ],
+                bulletNotes: [
+                    "Derry climbs into the garden thinking it empty; caught, he bursts out that people find his <strong>acid-burnt face</strong> terrible and only ever pity or fear him.",
+                    "Lamb refuses the script of pity: a <strong>tin leg is not the whole man</strong>, and a burnt cheek is not the whole boy; the crab apples still make jelly.",
+                    "Lamb's habits preach openness: <strong>gate always open</strong>, no curtains, weeds welcomed as plants, bees heard as <span class='neon-highlight'>singers, not buzzers</span>.",
+                    "The core lesson: watch, listen, think, feel: <span class='neon-highlight'>life is what you make of it</span>; the man who locked himself away in fear was killed by a falling picture.",
+                    "Lamb's sharpest line: acid burnt the outside of a face, but <strong>hatred burns from the inside</strong> and does far worse damage.",
+                    "Derry's transformation: he fights his mother for permission and <strong>returns to the garden</strong>: his first move toward people instead of away from them.",
+                    "Ending: Lamb lies fallen from the ladder among the apples; Derry weeps beside him but stays: <strong>the garden and its lesson are now his</strong>.",
+                    "Board angle: how Lamb differs from everyone else in Derry's life, the meaning of the locked-room story, and whether the ending is defeat or victory."
+                ],
+                flowchartSteps: [
+                    "Derry sneaks into the garden",
+                    "Lamb meets bitterness with openness",
+                    "Talk of bees, weeds, fear and hatred",
+                    "Derry returns against his mother's wish",
+                    "Lamb's fall; the change in Derry endures"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-green' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><path d='M16 30v46M84 30v46'/><path d='M16 34l40 8M16 74l40-8M56 42v24'/><path d='M26 38v30M36 41v24M46 44v18'/></svg><span class='doodle-caption'>the gate is always open</span>"
+            },
+            {
+                id: "vn-6",
+                book: "Vistas",
+                type: "Supplementary",
+                chapterNo: "Chapter 6",
+                title: "Memories of Childhood",
+                author: "Zitkala-Sa and Bama",
+                theme: "Two girlhoods against oppression: racism and caste seen through a child's eyes",
+                quotes: [
+                    "Zitkala-Sa hides under a bed, is dragged out and tied to a chair, and feels her thick braids fall to the scissors.",
+                    "Among her people, shingled hair belongs to cowards and cut hair to mourners: the school's scissors are an act of conquest.",
+                    "Bama's half-hour walk home stretches to an hour, held up by street performers, snack stalls and the endless theatre of the bazaar.",
+                    "Annan's counsel: study hard and make progress, and the world that shunned you will come to you on its own."
+                ],
+                summary: "Two autobiographical pieces about childhood and injustice. In The Cutting of My Long Hair, Zitkala-Sa, a Native American girl at a boarding school, resists having her hair shingled, hides under a bed, and is forcibly shorn: to her people, the mark of a coward. In We Too Are Human Beings, young Bama laughs at an elder carrying a food packet by its string until her brother Annan explains untouchability; his advice, to study and outgrow the insult, sets the course of her life.",
+                keyTerms: [
+                    { term: "Zitkala-Sa", definition: "Pen name of Gertrude Simmons Bonnin, a Native American writer; her piece recalls the forced assimilation of the Carlisle boarding school." },
+                    { term: "Bama", definition: "A Tamil Dalit writer; the extract comes from her autobiography Karukku." },
+                    { term: "Untouchability", definition: "The caste practice Bama witnesses: an elder may carry a landlord's food only by its string so that his touch cannot pollute it." },
+                    { term: "Shingled hair", definition: "For Zitkala-Sa's people, short hair signals cowardice and cut hair signals mourning; forcing it on her erases her identity." }
+                ],
+                bulletNotes: [
+                    "Part one, <strong>The Cutting of My Long Hair</strong>: clanging bells, eating by formula and staring paleface women make the school feel like a machine for breaking spirits.",
+                    "Warned that her hair will be cut, Zitkala-Sa <span class='neon-highlight'>resists: she hides under a bed</span>, is dragged out, tied to a chair, and shorn.",
+                    "Her verdict on the system: she feels like <strong>one of many little animals driven by a herder</strong>: assimilation experienced as dehumanisation.",
+                    "Part two, <strong>We Too Are Human Beings</strong>: Bama, in class three, has never heard the word untouchability; she laughs at an elder holding a snack packet by its string, until <strong>Annan</strong> explains the humiliation inside the scene.",
+                    "The lesson lands hard: her people are believed to pollute by touch; Bama feels <span class='neon-highlight'>sad, provoked and angry</span> enough to want to touch the packet herself.",
+                    "Annan's advice becomes her engine: <strong>study, make progress, throw off these indignities</strong>; Bama tops her class and finds the friendships once denied her.",
+                    "Board angle: how each girl resists, what the shorn hair and the string-held packet symbolise, and the single theme joining two cultures."
+                ],
+                flowchartSteps: [
+                    "Boarding school routine crushes Zitkala-Sa",
+                    "She hides; her hair is cut by force",
+                    "Bama's slow, wonder-filled walk home",
+                    "The string-held packet reveals untouchability",
+                    "Annan's advice: education as the way up"
+                ],
+                doodleSvg: "<svg class='doodle-svg ink-red' viewBox='0 0 100 100' fill='none' stroke='currentColor' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'><circle cx='30' cy='70' r='9'/><circle cx='30' cy='34' r='9'/><path d='M38 64L82 32M38 40l44 32'/></svg><span class='doodle-caption'>spirit stronger than scissors</span>"
+            },
+            {
+                id: "ch-13",
+                status: "archive",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 5",
+                title: "Should Wizard Hit Mommy?",
+                author: "John Updike",
+                theme: "Parental Wisdom vs. Child Individuality, and Moral Ambiguity",
+                quotes: [
+                    "\"The skunk loved his mother more than any of the other animals, and she knew what was right for him.\"",
+                    "\"Jo wanted the wizard to hit that mommy back!\""
+                ],
+                summary: "A father tells his daughter a bedtime story about a smelly skunk. When the skunk's mother forces him to return to his original bad smell, the story sparks a moral debate between parent and child.",
+                keyTerms: [
+                    { term: "Roger Skunk", definition: "The protagonist of Jack's stories, who wants to smell like roses so the other forest animals will play with him." },
+                    { term: "Jack & Jo", definition: "The father and his 4-year-old daughter. Their bedtime routine turns into a clash of adult wisdom and youthful desire for acceptance." }
+                ],
+                bulletNotes: [
+                    "<strong>The Bedtime Routine:</strong> Jack has told his daughter Jo bedtime stories for two years, following a set formula featuring a character named Roger.",
+                    "<strong>Roger Skunk's Request:</strong> Jo chooses a skunk for the story. Smelly Roger Skunk visits the Wizard, who uses magic to make him smell like roses.",
+                    "<strong>Joy & Play:</strong> The other forest animals embrace Roger Skunk, playing games with him until dark.",
+                    "<strong>The Angry Mother:</strong> His mother is furious at the change, insisting he should smell like a skunk. She takes him back to the Wizard, hitting him with her umbrella and demanding his original smell back.",
+                    "<strong>The Clashing Views:</strong> Jo is upset, demanding that the Wizard hit the mother back. She believes the mother was unfair and ruined Roger's happiness.",
+                    "<strong>The Father's Defense:</strong> Jack defends the mother, explaining that she knew what was best and that we should not change ourselves to please others.",
+                    "<strong>A Tense Ending:</strong> Jo remains stubborn, demanding a different ending the next day. Jack leaves her room, feeling caught in a cage of family responsibilities."
+                ],
+                flowchartSteps: [
+                    "Jack tells his 4-year-old daughter Jo a bedtime story about Roger Skunk",
+                    "Smelly Roger Skunk asks the Wizard to make him smell like roses",
+                    "The other forest animals accept him, playing happily together",
+                    "His mother is angry and forces the Wizard to restore his original smell",
+                    "Jo wants the Wizard to hit the mother for ruining Roger's joy",
+                    "Jack defends parental authority, leaving them in a tense disagreement"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-amber" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <path d="M20 70 L50 20 L80 70 Z" stroke="currentColor"/>
+                        <path d="M50 20 L50 90 M30 50 L70 50" stroke="currentColor"/>
+                        <circle cx="50" cy="15" r="4" fill="#f59e0b"/>
+                    </svg>
+                    <span class="doodle-caption">The Wizard's Wand</span>
+                `
+            },
+            {
+                id: "ch-14",
+                status: "archive",
+                book: "Vistas",
+                type: "Prose",
+                chapterNo: "Chapter 6",
+                title: "Evans Tries an O-Level",
+                author: "Colin Dexter",
+                theme: "Wits vs. Authority, Institutional Overconfidence, and Criminal Cleverness",
+                quotes: [
+                    "\"Evans the Break, they called him... He had escaped three times already.\"",
+                    "\"The prison officer removed the handcuffs... and Evans was free once again.\""
+                ],
+                summary: "A clever prisoner uses the opportunity of a German O-Level exam to plan a brilliant escape. He outwits the prison governor and his staff through careful planning and disguised identities.",
+                keyTerms: [
+                    { term: "Evans the Break", definition: "A clever, non-violent prisoner who has successfully escaped from prison three times before." },
+                    { term: "The Rubber Ring", definition: "A small rubber ring filled with pig's blood, used by the fake invigilator to fake a head injury during the escape." }
+                ],
+                bulletNotes: [
+                    "<strong>The Exam Request:</strong> The Governor of Oxford Prison organizes a German O-Level exam in Evans's cell, hiring an invigilator named Reverend McLeery.",
+                    "<strong>Jackson & Stephens:</strong> Two guards check Evans's cell, removing any sharp objects but letting him keep his lucky woolen hat.",
+                    "<strong>The Exam Setup:</strong> A hidden microphone is installed in the cell, and the Reverend is searched, revealing a rubber ring he claims is for his piles.",
+                    "<strong>The Clever Clues:</strong> The Governor hears a phone correction slip regarding the exam, unaware it is a secret message showing Evans his escape route.",
+                    "<strong>The Bleeding Victim:</strong> After the exam, Stephens finds a bloody McLeery inside the cell, who claims to know where Evans has gone.",
+                    "<strong>The Disguise Revealed:</strong> The bloody man is actually Evans himself in disguise. The real Reverend was tied up at home before the exam even started.",
+                    "<strong>The Final Escape:</strong> The Governor catches Evans at a local hotel. However, the prison van sent to collect him is driven by Evans's friends, who unlock his chains and help him escape once again."
+                ],
+                flowchartSteps: [
+                    "Evans requests to take a German O-Level exam in his cell",
+                    "Guards search his cell, letting him keep his lucky woolen hat",
+                    "A fake correction slip is phoned in, showing Evans his escape route",
+                    "Evans uses a rubber ring of pig's blood to fake a severe head injury",
+                    "Disguised as the bleeding priest, Evans slips out of the prison",
+                    "The Governor catches him at a hotel, but his friends rescue him in a fake van"
+                ],
+                doodleSvg: `
+                    <svg class="doodle-svg ink-black" viewBox="0 0 100 100" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <rect x="25" y="20" width="50" height="60" rx="3" stroke="currentColor"/>
+                        <line x1="35" y1="20" x2="35" y2="80"/>
+                        <line x1="45" y1="20" x2="45" y2="80"/>
+                        <line x1="55" y1="20" x2="55" y2="80"/>
+                        <line x1="65" y1="20" x2="65" y2="80"/>
+                    </svg>
+                    <span class="doodle-caption">Evans's Prison Bars</span>
+                `
+            }
+        ];
+
+        const quizQuestions = [
+            {
+                q: "What did M. Hamel write in bold chalk on the blackboard at the very end of his class?",
+                options: [
+                    "German is our Language",
+                    "Vive La France!",
+                    "Alsace is Free",
+                    "The Last Lesson"
+                ],
+                answer: 1,
+                chapter: "The Last Lesson"
+            },
+            {
+                q: "In Seemapuri, what does 'garbage' mean to the poor parents and their children?",
+                options: [
+                    "A waste of time and energy",
+                    "Survival for parents and wonder for children",
+                    "Gold and luxury jewelry",
+                    "A direct ticket to a local school"
+                ],
+                answer: 1,
+                chapter: "Lost Spring"
+            },
+            {
+                q: "What early childhood experience first caused William Douglas to fear water?",
+                options: [
+                    "A near-drowning accident at the YMCA pool",
+                    "A boat accident on Lake Wentworth",
+                    "Being swept over by waves on a California beach",
+                    "Falling into a local water well"
+                ],
+                answer: 2,
+                chapter: "Deep Water"
+            },
+            {
+                q: "What was the amount of refund that Gandhi agreed to accept from the Champaran planters?",
+                options: [
+                    "50% because he needed the funds",
+                    "10% as a token gesture",
+                    "25% to break the deadlock and claim victory",
+                    "100% to punish the landlords"
+                ],
+                answer: 2,
+                chapter: "Indigo"
+            },
+            {
+                q: "Who was Kothamangalam Subbu at Gemini Studios?",
+                options: [
+                    "The strict makeup chief",
+                    "The legal adviser in pants",
+                    "The creative No. 2 with a Brahmin virtue",
+                    "An anti-communist visitor"
+                ],
+                answer: 2,
+                chapter: "Poets and Pancakes"
+            },
+            {
+                q: "How does Umberto Eco describe his writing secret during Mukund's interview?",
+                options: [
+                    "Writing only on Sundays in a library",
+                    "Working during 'interstices' (empty gaps of time)",
+                    "Dictating stories to his assistants",
+                    "Using artificial intelligence"
+                ],
+                answer: 1,
+                chapter: "The Interview"
+            },
+            {
+                q: "What is Charley's dream destination that he tries to buy tickets for at the Third Level?",
+                options: [
+                    "Chicago, Illinois in 1920",
+                    "Galesburg, Illinois in 1894",
+                    "New York City in 1890",
+                    "London, England in 1914"
+                ],
+                answer: 1,
+                chapter: "The Third Level"
+            },
+            {
+                q: "What was the actual cause of death of the Tiger King, Jilani Jung Jung Bahadur?",
+                options: [
+                    "A fierce fight with a live tiger",
+                    "An attack by a British officer",
+                    "An infection from a tiny wooden toy tiger sliver",
+                    "Old age and poor health"
+                ],
+                answer: 2,
+                chapter: "The Tiger King"
+            },
+            {
+                q: "Why were the Japanese servants unwilling to help shelter Tom at Dr. Sadao's home?",
+                options: [
+                    "They hated all Americans",
+                    "They feared punishment for sheltering an enemy POW",
+                    "Sadao refused to pay them",
+                    "They preferred traditional medicine"
+                ],
+                answer: 1,
+                chapter: "The Enemy"
+            },
+            {
+                q: "Why is Evans known as 'Evans the Break' in Oxford Prison?",
+                options: [
+                    "He is violent and breaks things",
+                    "He has successfully escaped from prison three times before",
+                    "He takes regular breaks during work",
+                    "He teaches German during his break"
+                ],
+                answer: 1,
+                chapter: "Evans Tries an O-Level"
+            },
+            {
+                q: "Why were the village elders sitting on the back benches during the last lesson?",
+                options: [
+                    "The Prussians ordered every adult to attend",
+                    "To thank M. Hamel for forty years of service and honour the country that was theirs no more",
+                    "To learn German before the new order began",
+                    "To supervise the students during the final test"
+                ],
+                answer: 1,
+                chapter: "The Last Lesson"
+            },
+            {
+                q: "Why is Saheb 'no longer his own master' after joining the tea stall?",
+                options: [
+                    "He must now attend school every day",
+                    "The Rs 800 job costs him his freedom; even the steel canister he carries belongs to the shopkeeper",
+                    "The police monitor his movements in Seemapuri",
+                    "His parents have taken control of his earnings"
+                ],
+                answer: 1,
+                chapter: "Lost Spring"
+            },
+            {
+                q: "What plan did Douglas make as he sank to the bottom of the YMCA pool?",
+                options: [
+                    "To scream underwater until the lifeguard noticed",
+                    "To hit the bottom, spring up like a cork, lie flat and paddle to the edge",
+                    "To hold his breath and wait to be rescued",
+                    "To climb the drain pipe at the bottom of the pool"
+                ],
+                answer: 1,
+                chapter: "Deep Water"
+            },
+            {
+                q: "What did the peddler steal from the old crofter who had sheltered him?",
+                options: [
+                    "A wire rattrap",
+                    "Thirty kronor from the leather pouch by the window",
+                    "The cow that gave the milk",
+                    "A horse from the barn"
+                ],
+                answer: 1,
+                chapter: "The Rattrap"
+            },
+            {
+                q: "Why does the peddler finally sign his letter as 'Captain von Stahle'?",
+                options: [
+                    "He had actually served as a captain in the army",
+                    "To frighten the ironmaster into silence",
+                    "Edla's kindness raised him to act like the gentleman he had been mistaken for",
+                    "To hide his real identity from the police"
+                ],
+                answer: 2,
+                chapter: "The Rattrap"
+            },
+            {
+                q: "Under the old Champaran arrangement, what were the sharecroppers bound to do?",
+                options: [
+                    "Pay 15 percent of their income as tax to the British",
+                    "Plant 15 percent of their holdings with indigo and surrender the entire harvest as rent",
+                    "Work without wages on the planters' estates",
+                    "Buy synthetic indigo from Germany at fixed prices"
+                ],
+                answer: 1,
+                chapter: "Indigo"
+            },
+            {
+                q: "How did the legal adviser end a promising actress's career at Gemini Studios?",
+                options: [
+                    "He filed a court case against her",
+                    "He quietly recorded her angry outburst and played it back to her",
+                    "He replaced her with a junior artist",
+                    "He reported her to the Moral Re-Armament army"
+                ],
+                answer: 1,
+                chapter: "Poets and Pancakes"
+            },
+            {
+                q: "Which writer described interviews as feeling like 'thumbprints on his windpipe'?",
+                options: [
+                    "V. S. Naipaul",
+                    "Rudyard Kipling",
+                    "Lewis Carroll",
+                    "Saul Bellow"
+                ],
+                answer: 3,
+                chapter: "The Interview"
+            },
+            {
+                q: "What did Sophie claim Danny Casey promised her outside Royce's window?",
+                options: [
+                    "Tickets to the next United match",
+                    "To meet her again so she could get his autograph",
+                    "A signed United jersey",
+                    "An introduction to his club manager"
+                ],
+                answer: 1,
+                chapter: "Going Places"
+            },
+            {
+                q: "Why does Sophie share her Casey story with her brother Geoff first?",
+                options: [
+                    "Geoff is Danny Casey's biggest fan",
+                    "She envies his closed inner world and hopes the story will admit her into it",
+                    "Geoff is incapable of keeping secrets from the family",
+                    "He has promised to take her to Ireland one day"
+                ],
+                answer: 1,
+                chapter: "Going Places"
+            },
+            {
+                q: "What 'proof' of Sam's escape to Galesburg, 1894 does Charley find?",
+                options: [
+                    "A telegram sent from Galesburg",
+                    "A first-day cover posted in 1894 containing Sam's note",
+                    "Sam's psychiatric case file",
+                    "An old railway ticket stub for the third level"
+                ],
+                answer: 1,
+                chapter: "The Third Level"
+            },
+            {
+                q: "How did the Maharaja pacify the senior British officer he refused a tiger hunt?",
+                options: [
+                    "He allowed the officer a photograph with a dead tiger",
+                    "He sent about fifty costly diamond rings to the officer's wife",
+                    "He gifted the officer his hundredth tiger",
+                    "He paid a fine of three lakh rupees to the Crown"
+                ],
+                answer: 1,
+                chapter: "The Tiger King"
+            },
+            {
+                q: "Why is Antarctica called the place to understand the earth's past, present and future?",
+                options: [
+                    "Its ice cores hold half-million-year-old carbon records and show climate change unfolding",
+                    "It hosts the world's largest climate research cities",
+                    "Its volcanoes give direct access to the earth's core",
+                    "It receives the heaviest rainfall on the planet"
+                ],
+                answer: 0,
+                chapter: "Journey to the End of the Earth"
+            },
+            {
+                q: "What do the phytoplankton of the Southern Ocean illustrate in the chapter?",
+                options: [
+                    "That large animals matter more than microscopic ones",
+                    "That taking care of the small things keeps the larger food chain in place",
+                    "That the ozone layer has fully repaired itself",
+                    "That Antarctica supports no marine life at all"
+                ],
+                answer: 1,
+                chapter: "Journey to the End of the Earth"
+            },
+            {
+                q: "What became of the General's promise to send assassins for the American prisoner?",
+                options: [
+                    "The assassins arrived but Tom had already escaped",
+                    "Absorbed in his own illness, the General forgot to send them",
+                    "Hana paid the assassins to stay away",
+                    "Sadao cancelled the plan at the last moment"
+                ],
+                answer: 1,
+                chapter: "The Enemy"
+            },
+            {
+                q: "What did the Wizard do for Roger Skunk?",
+                options: [
+                    "Made him invisible to the other little animals",
+                    "Changed his smell to that of roses so the others would play with him",
+                    "Turned him into a woodland deer",
+                    "Gave him a magic umbrella against the rain"
+                ],
+                answer: 1,
+                chapter: "Should Wizard Hit Mommy?"
+            },
+            {
+                q: "How does Jo want her father to end the Roger Skunk story?",
+                options: [
+                    "Roger should run away from home",
+                    "The Wizard should hit Mommy back and let Roger keep the rose smell",
+                    "Mommy should apologise to Roger",
+                    "The animals should stop playing with Roger forever"
+                ],
+                answer: 1,
+                chapter: "Should Wizard Hit Mommy?"
+            },
+            {
+                q: "What was the real purpose of the 'correction slip' phoned in during the exam?",
+                options: [
+                    "To fix a genuine printing error in the German paper",
+                    "To pass Evans the hotel's name and the exact timing, coded as exam details",
+                    "To extend the examination by ten minutes",
+                    "To test whether the invigilator was genuine"
+                ],
+                answer: 1,
+                chapter: "Evans Tries an O-Level"
+            },
+{
+                q: "During the drive, what does the poet compare her dozing mother's face to?",
+                options: ["A wilted flower", "The face of a corpse, ashen and pale", "A fading old photograph", "A grey monsoon sky"],
+                answer: 1,
+                chapter: "My Mother at Sixty-Six"
+            },
+            {
+                q: "Why does the poet look out at the sprinting trees and the children spilling out of their homes?",
+                options: ["To check how far the airport is", "Because her mother asks her to look outside", "To distract herself with images of youth and life that contrast her mother's ageing", "Because the traffic is moving too slowly"],
+                answer: 2,
+                chapter: "My Mother at Sixty-Six"
+            },
+            {
+                q: "In Keeping Quiet, what does counting up to twelve most closely represent?",
+                options: ["The twelve months of school vacation", "The hours on a clock face, a short measurable moment shared by everyone", "The number of languages in the poem", "The poet's twelve favourite countries"],
+                answer: 1,
+                chapter: "Keeping Quiet"
+            },
+            {
+                q: "What example does Neruda use to prove that stillness is not the same as death?",
+                options: ["The earth, where what seems dead in winter later proves to be alive", "The whales that escape the fishermen", "The soldiers who win clean victories", "The clock that never stops ticking"],
+                answer: 0,
+                chapter: "Keeping Quiet"
+            },
+            {
+                q: "According to Keats, what gifts does a thing of beauty give us?",
+                options: ["Wealth, fame and admirers", "A quiet bower, sweet sleep, health and calm breathing", "Freedom from all work and duty", "A short pleasure that quickly fades"],
+                answer: 1,
+                chapter: "A Thing of Beauty"
+            },
+            {
+                q: "The endless fountain of immortal drink is a metaphor for what?",
+                options: ["The holy rivers of the earth", "Rain that never stops falling", "The unending joy that beautiful things pour into us, like a divine gift", "The wine served to the mighty dead"],
+                answer: 2,
+                chapter: "A Thing of Beauty"
+            },
+            {
+                q: "What do the people who run the roadside stand actually long for?",
+                options: ["Praise for their berries and squash", "A little of the city money, a share in the cash flow that supports city life", "A government job in the city", "The company of famous travellers"],
+                answer: 1,
+                chapter: "A Roadside Stand"
+            },
+            {
+                q: "Who does Frost call greedy good-doers and beneficent beasts of prey?",
+                options: ["The wild animals near the farmhouse", "The travellers who stop to ask for directions", "The farmers who overprice their goods", "Powerful agencies whose calculated help robs the rural poor of independence and peace"],
+                answer: 3,
+                chapter: "A Roadside Stand"
+            },
+            {
+                q: "What do Aunt Jennifer's embroidered tigers symbolise?",
+                options: ["The dangers waiting in the forest", "The fearless freedom and confidence she longs for but does not have", "Her love for expensive jewellery", "The men sitting beneath the tree"],
+                answer: 1,
+                chapter: "Aunt Jennifer's Tigers"
+            },
+            {
+                q: "What does the massive weight of the wedding band on Aunt Jennifer's hand suggest?",
+                options: ["The ring is made of heavy gold", "She is proud of her long marriage", "The crushing burden of an oppressive, male-dominated marriage", "She is too old to wear jewellery"],
+                answer: 2,
+                chapter: "Aunt Jennifer's Tigers"
+            },
+            {
+                q: "How was Derry's face damaged in On the Face of It?",
+                options: ["He was born with a large birthmark", "A fire broke out in his school", "Acid burnt one whole side of his face", "He fell from an apple tree"],
+                answer: 2,
+                chapter: "On the Face of It"
+            },
+            {
+                q: "Why does Mr Lamb tell Derry the story of the man who locked himself in his room?",
+                options: ["To show that fear itself, not danger, is what truly destroys a life", "To warn Derry never to hang pictures on walls", "To prove that staying indoors keeps people safe", "To explain why his own gate stays locked"],
+                answer: 0,
+                chapter: "On the Face of It"
+            },
+            {
+                q: "Why does Zitkala-Sa fight so hard against having her hair shingled?",
+                options: ["She fears the scissors will hurt her", "Among her people, shingled hair is worn by cowards, so cutting it means humiliation", "Her mother told her short hair causes illness", "She wants to look like the paleface women"],
+                answer: 1,
+                chapter: "Memories of Childhood"
+            },
+            {
+                q: "What advice does Annan give young Bama after explaining untouchability to her?",
+                options: ["Never walk through the landlord's street again", "Learn to accept the customs of the village quietly", "Leave school and start earning early", "Study hard and make progress, so that people cast off the indignities and come to you on their own"],
+                answer: 3,
+                chapter: "Memories of Childhood"
+            }
+        ];
+
+        /* ================= SAFE STORAGE ================= */
+        const store = (() => {
+            try {
+                const t = "__br_test__";
+                localStorage.setItem(t, "1");
+                localStorage.removeItem(t);
+                return { persistent: true, get: k => localStorage.getItem(k), set: (k, v) => localStorage.setItem(k, v), del: k => localStorage.removeItem(k) };
+            } catch (e) {
+                const mem = {};
+                return { persistent: false, get: k => (k in mem ? mem[k] : null), set: (k, v) => { mem[k] = v; }, del: k => { delete mem[k]; } };
+            }
+        })();
+
+        const SAVE_KEY = "boardready_en12_v1";
+        let save = { v: 2, revised: {}, lastChapter: null, quizLog: [], theme: null };
+
+        function loadSave() {
+            try {
+                const raw = store.get(SAVE_KEY);
+                if (!raw) return;
+                const s = JSON.parse(raw);
+                if (s && typeof s === "object") {
+                    save.revised = (s.revised && typeof s.revised === "object") ? s.revised : {};
+                    save.lastChapter = s.lastChapter || null;
+                    save.quizLog = Array.isArray(s.quizLog) ? s.quizLog.slice(0, 20) : [];
+                    save.theme = s.theme || null;
+                }
+            } catch (e) { /* corrupt save: start fresh */ }
+        }
+        function persist() { try { store.set(SAVE_KEY, JSON.stringify(save)); } catch (e) {} }
+
+        /* ================= HELPERS ================= */
+        const $ = id => document.getElementById(id);
+        const coreChapters = () => studyDatabase.filter(c => c.status !== "archive");
+        function sectionOf(ch) {
+            if (ch.status === "archive") return "archive";
+            if (ch.book === "Flamingo") return ch.type === "Poetry" ? "poetry" : "prose";
+            return "vistas";
+        }
+        const SECTIONS = {
+            prose:   { label: "Flamingo · Prose",  short: "Prose",   c: "--flam", cs: "--flamSoft" },
+            poetry:  { label: "Flamingo · Poetry", short: "Poetry",  c: "--poet", cs: "--poetSoft" },
+            vistas:  { label: "Vistas",            short: "Vistas",  c: "--vist", cs: "--vistSoft" },
+            archive: { label: "Archive",           short: "Archive", c: "--arch", cs: "--archSoft" }
+        };
+        function tagHtml(sec, text) {
+            const m = SECTIONS[sec];
+            return `<span class="tag" style="background:var(${m.cs});color:var(${m.c})">${text}</span>`;
+        }
+        function byId(id) { return studyDatabase.find(c => c.id === id); }
+        function sectionChapters(sec) { return studyDatabase.filter(c => sectionOf(c) === sec); }
+        function revisedCount(list) { return list.filter(c => save.revised[c.id]).length; }
+        function shuffle(a) {
+            const arr = a.slice();
+            for (let i = arr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [arr[i], arr[j]] = [arr[j], arr[i]];
+            }
+            return arr;
+        }
+        function ringSvg(pct, size, fillColor, trackColor, fontPx) {
+            const sw = Math.max(8, Math.round(size * 0.1));
+            const r = (size - sw) / 2, c = size / 2;
+            const cir = 2 * Math.PI * r, off = cir * (1 - Math.min(1, Math.max(0, pct)));
+            return `<div class="ring-wrap" style="width:${size}px;height:${size}px">
+                <svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" aria-hidden="true">
+                  <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${trackColor}" stroke-width="${sw}"/>
+                  <circle cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${fillColor}" stroke-width="${sw}" stroke-linecap="round"
+                    stroke-dasharray="${cir.toFixed(1)}" stroke-dashoffset="${off.toFixed(1)}"
+                    transform="rotate(-90 ${c} ${c})" style="transition:stroke-dashoffset .6s ease"/>
+                </svg>
+                <div class="ring-num" style="font-size:${fontPx}px">${Math.round(pct * 100)}%</div>
+              </div>`;
+        }
+
+        /* ================= THEME ================= */
+        function applyTheme() {
+            const pref = save.theme || (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+            document.documentElement.dataset.theme = pref;
+            const b = $("themeBtn");
+            if (b) b.textContent = pref === "dark" ? "☀️" : "🌙";
+        }
+        function toggleTheme() {
+            const cur = document.documentElement.dataset.theme === "dark" ? "dark" : "light";
+            save.theme = cur === "dark" ? "light" : "dark";
+            persist();
+            applyTheme();
+        }
+
+        /* ================= VIEWS ================= */
+        let currentView = "home";
+        let currentChapterId = null;
+        function switchView(v) {
+            currentView = v;
+            document.querySelectorAll(".view").forEach(el => el.classList.remove("active"));
+            const target = $("view-" + v);
+            if (target) target.classList.add("active");
+            const navKey = v === "reader" ? "library" : v;
+            document.querySelectorAll(".nav-btn").forEach(b => b.classList.toggle("active", b.dataset.view === navKey));
+            if (v === "home") renderHome();
+            if (v === "library") renderLibrary();
+            if (v === "quiz") renderQuiz();
+            if (v === "progress") renderProgress();
+            window.scrollTo({ top: 0 });
+        }
+
+        /* ================= HOME ================= */
+        function barRows(includeArchive) {
+            const keys = includeArchive ? ["prose", "poetry", "vistas", "archive"] : ["prose", "poetry", "vistas"];
+            return keys.map(k => {
+                const list = sectionChapters(k);
+                const done = revisedCount(list);
+                const pct = list.length ? (done / list.length) * 100 : 0;
+                return `<div class="bar-row">
+                    <div class="bar-tagcol">${tagHtml(k, SECTIONS[k].short)}</div>
+                    <div class="bar-track"><div class="bar-fill" style="width:${pct}%;background:var(${SECTIONS[k].c})"></div></div>
+                    <div class="bar-n">${done}/${list.length}</div>
+                  </div>`;
+            }).join("");
+        }
+        function renderHome() {
+            const core = coreChapters();
+            const done = revisedCount(core);
+            const pct = core.length ? done / core.length : 0;
+            const coreTitles = new Set(core.map(c => c.title));
+            const drillN = quizQuestions.filter(q => coreTitles.has(q.chapter)).length;
+            const last = save.lastChapter ? byId(save.lastChapter) : null;
+            const next = last || core.find(c => !save.revised[c.id]) || core[0];
+            const contHtml = next ? `
+                <div class="card cont-card">
+                  <div style="min-width:0">
+                    <p class="cc-kicker">${last ? "Pick up where you left off" : "Start here"}</p>
+                    <h3 class="cc-name">${next.title}</h3>
+                    ${tagHtml(sectionOf(next), SECTIONS[sectionOf(next)].label + " · " + next.chapterNo)}
+                  </div>
+                  <button class="btn btn-primary" onclick="openChapter('${next.id}')">${last ? "Resume" : "Open"} →</button>
+                </div>` : "";
+            $("homeBody").innerHTML = `
+                <div class="hero">
+                  <div style="min-width:0">
+                    <h1 class="hero-hi">Hey, future topper! 👋</h1>
+                    <p class="hero-sub">Your complete Class XII English Core syllabus: ${core.length} chapters, ${drillN} drill questions, zero fluff. Revised chapters fill this ring.</p>
+                  </div>
+                  ${ringSvg(pct, 96, "#ffffff", "rgba(255,255,255,.28)", 18)}
+                </div>
+                ${contHtml}
+                <h2 class="sec-h">📖 Your books</h2>
+                <div class="card">${barRows(true)}</div>
+                <h2 class="sec-h">⚡ Quick start</h2>
+                <div class="quick">
+                  <button class="quick-btn" onclick="startQuiz('core')">
+                    <span class="qb-ic">🎯</span>
+                    <div class="qb-t">Board drill</div>
+                    <div class="qb-s">${drillN} questions · syllabus only</div>
+                  </button>
+                  <button class="quick-btn" onclick="switchView('library')">
+                    <span class="qb-ic">📚</span>
+                    <div class="qb-t">Browse chapters</div>
+                    <div class="qb-s">${studyDatabase.length} chapters · notes and quizzes</div>
+                  </button>
+                </div>
+                <div class="card note-card" style="margin-top:16px">✅ Matched to the CBSE 2026-27 English Core syllabus: Flamingo 8 prose + 5 poems, Vistas 6 chapters. Wizard and Evans sit in the Archive: kept for reference, not examinable.</div>`;
+        }
+
+        /* ================= LIBRARY ================= */
+        let activeFilter = "all";
+        let query = "";
+        function setQuery(v) {
+            query = v || "";
+            ["searchMob", "searchDesk"].forEach(id => {
+                const el = $(id);
+                if (el && el !== document.activeElement && el.value !== query) el.value = query;
+            });
+            if (currentView !== "library" && currentView !== "reader") switchView("library");
+            else if (currentView === "reader") switchView("library");
+            else renderLibrary();
+        }
+        function setFilter(f) { activeFilter = f; renderLibrary(); }
+        function renderLibrary() {
+            const counts = { all: studyDatabase.length };
+            ["prose", "poetry", "vistas", "archive"].forEach(k => counts[k] = sectionChapters(k).length);
+            $("filterPills").innerHTML = [
+                ["all", "All " + counts.all],
+                ["prose", "Prose " + counts.prose],
+                ["poetry", "Poetry " + counts.poetry],
+                ["vistas", "Vistas " + counts.vistas],
+                ["archive", "Archive " + counts.archive]
+            ].map(([k, lbl]) => `<button class="pill ${activeFilter === k ? "active" : ""}" onclick="setFilter('${k}')">${lbl}</button>`).join("");
+            const q = query.trim().toLowerCase();
+            const list = studyDatabase.filter(ch => {
+                if (activeFilter !== "all" && sectionOf(ch) !== activeFilter) return false;
+                if (!q) return true;
+                return (ch.title + " " + ch.author + " " + ch.theme + " " + ch.summary).toLowerCase().includes(q);
+            });
+            $("chGrid").innerHTML = list.map(ch => {
+                const sec = sectionOf(ch);
+                const isArch = sec === "archive";
+                const done = !!save.revised[ch.id];
+                return `<button class="ch-card ${isArch ? "archive" : ""}" onclick="openChapter('${ch.id}')">
+                    <div class="cc-tags">${tagHtml(sec, SECTIONS[sec].short)}<span class="tag" style="background:var(--surface2);color:var(--muted)">${isArch ? "Not in syllabus" : ch.chapterNo}</span></div>
+                    <h3 class="cc-title">${ch.title}</h3>
+                    <p class="cc-auth">${ch.author}</p>
+                    <div class="cc-foot">
+                      <span class="${done ? "done-chip" : "todo-chip"}">${done ? "✓ Revised" : "○ To revise"}</span>
+                      <span class="open-hint">Open →</span>
+                    </div>
+                  </button>`;
+            }).join("");
+            $("emptyMsg").classList.toggle("hidden", list.length > 0);
+        }
+
+        /* ================= READER ================= */
+        function openChapter(id) {
+            const ch = byId(id);
+            if (!ch) return;
+            currentChapterId = id;
+            save.lastChapter = id;
+            persist();
+            renderReader(ch);
+            switchView("reader");
+        }
+        function toggleRevised(id) {
+            save.revised[id] = !save.revised[id];
+            if (!save.revised[id]) delete save.revised[id];
+            persist();
+            if (currentView === "reader" && currentChapterId) renderReader(byId(currentChapterId));
+            if (currentView === "progress") renderProgress();
+            if (currentView === "library") renderLibrary();
+            if (currentView === "home") renderHome();
+        }
+        function renderReader(ch) {
+            if (!ch) { switchView("library"); return; }
+            const sec = sectionOf(ch);
+            const m = SECTIONS[sec];
+            const isPoem = ch.type === "Poetry";
+            const isArch = sec === "archive";
+            const order = studyDatabase;
+            const idx = order.findIndex(c => c.id === ch.id);
+            const prev = idx > 0 ? order[idx - 1] : null;
+            const next = idx < order.length - 1 ? order[idx + 1] : null;
+            const done = !!save.revised[ch.id];
+            const banners =
+                (isArch ? `<div class="banner warn">🗄️ Removed from the CBSE syllabus in the 2023 rationalisation. Not asked in boards. Kept here for reference only.</div>` : "") +
+                (isPoem ? `<div class="banner info">📖 Poem lines are described, not reprinted here. Keep the Flamingo text open beside these notes.</div>` : "");
+            $("readerBody").innerHTML = `
+                <div class="rd-top">
+                  <button class="chip-btn" onclick="switchView('library')">← Chapters</button>
+                  <div class="rd-nav">
+                    <button class="chip-btn" ${prev ? `onclick="openChapter('${prev.id}')"` : "disabled"}>← Prev</button>
+                    <button class="chip-btn" ${next ? `onclick="openChapter('${next.id}')"` : "disabled"}>Next →</button>
+                  </div>
+                </div>
+                <div class="rd-hero" style="background:var(${m.cs})">
+                  <div class="rd-hero-main">
+                    <div class="cc-tags">${tagHtml(sec, m.label)}<span class="tag" style="background:var(--surface);color:var(--ink2)">${isArch ? "Archive" : ch.chapterNo}</span></div>
+                    <h1 class="rd-title">${ch.title}</h1>
+                    <p class="rd-auth">by ${ch.author}</p>
+                    <button class="revised-pill ${done ? "on" : ""}" onclick="toggleRevised('${ch.id}')">${done ? "✓ Revised" : "○ Mark as revised"}</button>
+                  </div>
+                  <div class="rd-doodle">${ch.doodleSvg || ""}</div>
+                </div>
+                ${banners}
+                <div class="card theme-strip">
+                  <p class="ts-kicker">💡 Theme in one line</p>
+                  <h2 class="ts-line">${ch.theme}</h2>
+                  <p class="ts-sum">${ch.summary}</p>
+                </div>
+                <div class="rd-grid">
+                  <div class="card">
+                    <h3 class="sc-h">✍️ Study Notes</h3>
+                    <ul class="notes">${(ch.bulletNotes || []).map(n => `<li>${n}</li>`).join("")}</ul>
+                  </div>
+                  <div class="side">
+                    <div class="side-card">
+                      <h3 class="sc-h">${isPoem ? "📜 Poem Flow" : "🕒 Story Arc"}</h3>
+                      ${(ch.flowchartSteps || []).map((s, i) => `<div class="fstep"><span class="fno">${i + 1}</span>${s}</div>`).join("")}
+                    </div>
+                    <div class="side-card">
+                      <h3 class="sc-h">${isPoem ? "🎭 Poetic Devices" : "🔑 Key Terms"}</h3>
+                      ${(ch.keyTerms || []).map(t => `<div class="term"><h5>${t.term}</h5><p>${t.definition}</p></div>`).join("")}
+                    </div>
+                    <div class="side-card">
+                      <h3 class="sc-h">${isPoem ? "🖼️ Key Images" : "💬 Core Quotes"}</h3>
+                      ${(ch.quotes || []).map(qt => `<p class="quote" style="border-left-color:var(${m.c})">${qt}</p>`).join("")}
+                    </div>
+                  </div>
+                </div>
+                <div class="rd-actions">
+                  <button class="btn btn-primary" onclick="startQuiz('${ch.id}')">🎯 Quiz this chapter</button>
+                  ${next ? `<button class="btn btn-soft" onclick="openChapter('${next.id}')">Next chapter →</button>` : ""}
+                </div>`;
+        }
+
+        /* ================= QUIZ ================= */
+        let quizState = null;
+        function scopeTitles(scope) {
+            if (scope === "core") return coreChapters().map(c => c.title);
+            if (scope === "prose" || scope === "poetry" || scope === "vistas") return sectionChapters(scope).map(c => c.title);
+            const ch = byId(scope);
+            return ch ? [ch.title] : [];
+        }
+        function scopeLabel(scope) {
+            if (scope === "core") return "Full Board Drill";
+            if (scope === "prose") return "Flamingo Prose";
+            if (scope === "poetry") return "Flamingo Poetry";
+            if (scope === "vistas") return "Vistas";
+            const ch = byId(scope);
+            return ch ? ch.title : "Quiz";
+        }
+        function startQuiz(scope) {
+            const titles = new Set(scopeTitles(scope));
+            const pool = [];
+            quizQuestions.forEach((q, i) => { if (titles.has(q.chapter)) pool.push(i); });
+            if (!pool.length) { showNote("No questions yet", "This selection has no quiz questions."); return; }
+            quizState = {
+                scope, label: scopeLabel(scope),
+                list: shuffle(pool).map(qi => ({ qi, ord: shuffle([0, 1, 2, 3]) })),
+                idx: 0, picked: {}, right: 0, done: false
+            };
+            switchView("quiz");
+        }
+        function chooseAnswer(orig) {
+            if (!quizState || quizState.done) return;
+            const i = quizState.idx;
+            if (quizState.picked[i] !== undefined) return;
+            quizState.picked[i] = orig;
+            const q = quizQuestions[quizState.list[i].qi];
+            if (orig === q.answer) quizState.right++;
+            renderQuiz();
+        }
+        function nextQuestion() {
+            if (!quizState) return;
+            if (quizState.idx < quizState.list.length - 1) { quizState.idx++; renderQuiz(); }
+            else finishQuiz();
+        }
+        function finishQuiz() {
+            quizState.done = true;
+            const total = quizState.list.length;
+            save.quizLog.push({ d: Date.now(), label: quizState.label, score: quizState.right, total });
+            if (save.quizLog.length > 20) save.quizLog = save.quizLog.slice(-20);
+            persist();
+            renderQuiz();
+            if (quizState.right / total >= 0.8) launchConfetti();
+        }
+        function exitQuizAsk() {
+            if (!quizState || quizState.done || Object.keys(quizState.picked).length === 0) {
+                quizState = null; renderQuiz(); return;
+            }
+            askConfirm("Leave the quiz?", "Your answers so far will be discarded.", "Leave", () => { quizState = null; renderQuiz(); });
+        }
+        function renderQuiz() {
+            if (!quizState) { renderQuizSetup(); return; }
+            if (quizState.done) { renderQuizResults(); return; }
+            renderQuizRunner();
+        }
+        function qCount(scope) {
+            const titles = new Set(scopeTitles(scope));
+            return quizQuestions.filter(q => titles.has(q.chapter)).length;
+        }
+        function renderQuizSetup() {
+            $("quizBody").innerHTML = `
+                <div class="drill-hero">
+                  <div style="min-width:0">
+                    <h1 class="dh-t">Quiz Arena 🎯</h1>
+                    <p class="dh-s">The full board drill covers every syllabus chapter: ${qCount("core")} questions with instant feedback. Options shuffle on every attempt.</p>
+                  </div>
+                  <button class="btn btn-white" onclick="startQuiz('core')">Start full drill</button>
+                </div>
+                <h2 class="sec-h">🎪 Or drill one section</h2>
+                <div class="scope-grid">
+                  <button class="scope-btn" onclick="startQuiz('prose')"><span style="font-size:22px">🩰</span><div class="sb-t">Flamingo Prose</div><div class="sb-n">${qCount("prose")} questions · 8 chapters</div></button>
+                  <button class="scope-btn" onclick="startQuiz('poetry')"><span style="font-size:22px">🪶</span><div class="sb-t">Flamingo Poetry</div><div class="sb-n">${qCount("poetry")} questions · 5 poems</div></button>
+                  <button class="scope-btn" onclick="startQuiz('vistas')"><span style="font-size:22px">🔭</span><div class="sb-t">Vistas</div><div class="sb-n">${qCount("vistas")} questions · 6 chapters</div></button>
+                </div>
+                <div class="card note-card" style="margin-top:16px">💡 Want a single chapter? Open it from Chapters and hit Quiz this chapter. Archive questions live only inside the archive chapters.</div>`;
+        }
+        function renderQuizRunner() {
+            const i = quizState.idx, total = quizState.list.length;
+            const item = quizState.list[i];
+            const q = quizQuestions[item.qi];
+            const picked = quizState.picked[i];
+            const answered = picked !== undefined;
+            const ch = studyDatabase.find(c => c.title === q.chapter);
+            const sec = ch ? sectionOf(ch) : "prose";
+            const opts = item.ord.map((orig, disp) => {
+                let cls = "qopt";
+                if (answered) {
+                    if (orig === q.answer) cls += " correct";
+                    else if (orig === picked) cls += " wrong";
+                    else cls += " dim";
+                }
+                return `<button class="${cls}" ${answered ? "disabled" : `onclick="chooseAnswer(${orig})"`}>
+                    <span class="ol">${"ABCD"[disp]}</span><span>${q.options[orig]}</span>
+                  </button>`;
+            }).join("");
+            const fb = answered
+                ? (picked === q.answer
+                    ? `<span class="fb-msg ok">✅ Nailed it!</span>`
+                    : `<span class="fb-msg no">❌ Not quite. The right answer is highlighted.</span>`)
+                : `<span class="fb-msg" style="color:var(--muted)">Pick an answer to lock it in</span>`;
+            const nextBtn = answered
+                ? `<button class="btn btn-primary" onclick="nextQuestion()">${i === total - 1 ? "See results 🏁" : "Next →"}</button>`
+                : "";
+            $("quizBody").innerHTML = `
+                <div class="q-top">
+                  ${tagHtml("prose", quizState.label).replace("--flamSoft", "--brandSoft").replace("--flam", "--brand")}
+                  <button class="chip-btn" onclick="exitQuizAsk()">✕ Exit</button>
+                </div>
+                <div class="q-track"><div class="q-fill" style="width:${((i + (answered ? 1 : 0)) / total) * 100}%"></div></div>
+                <div class="q-count">Question ${i + 1} of ${total} · Score ${quizState.right}</div>
+                <div class="card q-card">
+                  ${tagHtml(sec, q.chapter)}
+                  <h2 class="q-q">${q.q}</h2>
+                  ${opts}
+                  <div class="fb-row">${fb}${nextBtn}</div>
+                </div>`;
+        }
+        function renderQuizResults() {
+            const total = quizState.list.length;
+            const right = quizState.right;
+            const pct = right / total;
+            const color = pct >= 0.8 ? "var(--good)" : pct >= 0.5 ? "var(--poet)" : "var(--bad)";
+            const verdict = pct >= 0.9 ? "Beast mode unlocked 🦁"
+                : pct >= 0.7 ? "Strong. Sharpen the misses. 💪"
+                : pct >= 0.4 ? "Halfway there. The review below is your homework. 📖"
+                : "Rough round. Reread the notes, retake tomorrow. 🔁";
+            const misses = quizState.list.map((item, i) => ({ item, i }))
+                .filter(({ item, i }) => quizState.picked[i] !== quizQuestions[item.qi].answer)
+                .map(({ item }) => {
+                    const q = quizQuestions[item.qi];
+                    return `<div class="miss">
+                        <p class="miss-ch">${q.chapter}</p>
+                        <p class="miss-q">${q.q}</p>
+                        <p class="miss-a">Correct answer: <b>${q.options[q.answer]}</b></p>
+                      </div>`;
+                }).join("");
+            $("quizBody").innerHTML = `
+                <div class="card res-hero">
+                  ${ringSvg(pct, 130, color, "var(--surface2)", 24)}
+                  <h2 class="res-verdict">${verdict}</h2>
+                  <p class="res-sub">${quizState.label} · ${right} of ${total} correct</p>
+                  <div class="res-chips">
+                    <span class="chip-stat g">✓ ${right} right</span>
+                    <span class="chip-stat b">✗ ${total - right} wrong</span>
+                  </div>
+                </div>
+                ${misses ? `<h2 class="sec-h">🔍 Review your misses</h2>${misses}` : `<div class="card note-card" style="margin-top:16px">🎉 A perfect run. Nothing to review.</div>`}
+                <div class="rd-actions">
+                  <button class="btn btn-primary" onclick="startQuiz('${quizState.scope}')">🔁 Retake</button>
+                  ${quizState.scope !== "core" ? `<button class="btn btn-soft" onclick="startQuiz('core')">🎯 Full drill</button>` : ""}
+                  <button class="btn btn-soft" onclick="quizState=null;switchView('library')">📚 Back to chapters</button>
+                </div>`;
+        }
+
+        /* ================= PROGRESS ================= */
+        function renderProgress() {
+            const core = coreChapters();
+            const done = revisedCount(core);
+            const pct = core.length ? done / core.length : 0;
+            const groups = ["prose", "poetry", "vistas", "archive"].map(k => {
+                const list = sectionChapters(k);
+                const rows = list.map(ch => `
+                    <button class="check-row ${save.revised[ch.id] ? "on" : ""}" onclick="toggleRevised('${ch.id}')">
+                      <span class="cb">${save.revised[ch.id] ? "✓" : ""}</span>
+                      <span style="min-width:0"><span class="cr-t">${ch.title}</span><br><span class="cr-a">${ch.author}</span></span>
+                    </button>`).join("");
+                return `<h2 class="sec-h">${tagHtml(k, SECTIONS[k].label)}</h2><div class="card" style="padding:8px 14px">${rows}</div>`;
+            }).join("");
+            const logs = save.quizLog.slice(-8).reverse().map(l => {
+                const p = l.total ? l.score / l.total : 0;
+                const st = p >= 0.8 ? "background:var(--goodSoft);color:var(--good)" : p >= 0.5 ? "background:var(--poetSoft);color:var(--poet)" : "background:var(--badSoft);color:var(--bad)";
+                const dt = new Date(l.d).toLocaleDateString(undefined, { day: "numeric", month: "short" });
+                return `<div class="log-row"><span><span class="log-l">${l.label}</span> <span class="log-d">· ${dt}</span></span><span class="log-score" style="${st}">${l.score}/${l.total}</span></div>`;
+            }).join("");
+            $("progressBody").innerHTML = `
+                <div class="card p-hero">
+                  ${ringSvg(pct, 110, "var(--brand)", "var(--surface2)", 21)}
+                  <div style="min-width:0">
+                    <h1 class="p-hero-t">${done} of ${core.length} syllabus chapters revised</h1>
+                    <p class="p-hero-s">The ring counts only the ${core.length} examinable chapters. Archive reading is extra credit.</p>
+                  </div>
+                </div>
+                ${groups}
+                <h2 class="sec-h">🏆 Recent quizzes</h2>
+                <div class="card">${logs || `<p class="p-hero-s" style="margin:6px 0">No quizzes yet. The drill is waiting. 🎯</p>`}</div>`;
+        }
+
+        /* ================= SAVE / EXPORT / IMPORT ================= */
+        function b64encode(str) { return btoa(unescape(encodeURIComponent(str))); }
+        function b64decode(str) { return decodeURIComponent(escape(atob(str))); }
+        function exportFile() {
+            const blob = new Blob([JSON.stringify(save, null, 2)], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url; a.download = "boardready-english-progress.json";
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(() => URL.revokeObjectURL(url), 800);
+            showToast("Progress file exported ✓");
+        }
+        function copyCode() {
+            const code = b64encode(JSON.stringify(save));
+            const finish = ok => showToast(ok ? "Backup code copied ✓" : "Copy failed. Long-press to copy instead.");
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(code).then(() => finish(true)).catch(() => { $("impCode").value = code; finish(false); });
+            } else {
+                $("impCode").value = code;
+                try { $("impCode").select(); document.execCommand("copy"); finish(true); } catch (e) { finish(false); }
+            }
+        }
+        function importFile(input) {
+            const f = input.files && input.files[0];
+            if (!f) return;
+            const r = new FileReader();
+            r.onload = () => applyImport(String(r.result || ""));
+            r.readAsText(f);
+            input.value = "";
+        }
+        function importCode() {
+            const txt = $("impCode").value.trim();
+            if (!txt) { showNote("Nothing to restore", "Paste a backup code or the exported file text first."); return; }
+            applyImport(txt);
+        }
+        function applyImport(text) {
+            let obj = null;
+            try { obj = JSON.parse(text); }
+            catch (e) { try { obj = JSON.parse(b64decode(text.trim())); } catch (e2) { obj = null; } }
+            if (!obj || typeof obj !== "object" || !obj.revised || typeof obj.revised !== "object") {
+                showNote("Could not read that", "That does not look like a BoardReady progress file or backup code.");
+                return;
+            }
+            askConfirm("Restore this progress?", "It will replace whatever is currently saved in this browser.", "Restore", () => {
+                save = {
+                    v: 2,
+                    revised: obj.revised || {},
+                    lastChapter: obj.lastChapter || null,
+                    quizLog: Array.isArray(obj.quizLog) ? obj.quizLog.slice(-20) : [],
+                    theme: obj.theme || save.theme
+                };
+                persist(); applyTheme();
+                $("impCode").value = "";
+                renderHome(); renderLibrary(); renderProgress();
+                switchView("progress");
+                showToast("Progress restored ✓");
+            });
+        }
+        function resetAllAsk() {
+            askConfirm("Reset everything?", "Revised marks and quiz history will be wiped. Your theme stays.", "Reset", () => {
+                save = { v: 2, revised: {}, lastChapter: null, quizLog: [], theme: save.theme };
+                persist(); quizState = null;
+                renderHome(); renderLibrary(); renderProgress(); renderQuiz();
+                showToast("Fresh start ✓");
+            });
+        }
+
+        /* ================= MODALS + TOAST + CONFETTI ================= */
+        let pendingConfirm = null;
+        function showNote(t, b) { $("noteTitle").textContent = t; $("noteBody").textContent = b; $("noteModal").classList.remove("hidden"); }
+        function closeNote() { $("noteModal").classList.add("hidden"); }
+        function askConfirm(t, b, okLabel, fn) {
+            pendingConfirm = fn;
+            $("confirmTitle").textContent = t;
+            $("confirmBody").textContent = b;
+            $("confirmOk").textContent = okLabel;
+            $("confirmModal").classList.remove("hidden");
+        }
+        function closeConfirm() { pendingConfirm = null; $("confirmModal").classList.add("hidden"); }
+        function doConfirm() {
+            $("confirmModal").classList.add("hidden");
+            const fn = pendingConfirm; pendingConfirm = null;
+            if (fn) fn();
+        }
+        let toastTimer = null;
+        function showToast(msg) {
+            const t = $("toast");
+            t.textContent = msg;
+            t.classList.add("show");
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => t.classList.remove("show"), 2400);
+        }
+        function launchConfetti() {
+            const cv = $("confetti");
+            const ctx = cv.getContext && cv.getContext("2d");
+            if (!ctx) return;
+            cv.classList.remove("hidden");
+            cv.width = innerWidth; cv.height = innerHeight;
+            const colors = ["#6C5CE7", "#F2477E", "#E08700", "#0FA396", "#1DB954", "#8B7CF3"];
+            const bits = Array.from({ length: 130 }, () => ({
+                x: Math.random() * cv.width,
+                y: -20 - Math.random() * cv.height * 0.4,
+                w: 6 + Math.random() * 7,
+                h: 8 + Math.random() * 8,
+                vy: 2.4 + Math.random() * 3.4,
+                vx: -1.4 + Math.random() * 2.8,
+                rot: Math.random() * Math.PI,
+                vr: -0.14 + Math.random() * 0.28,
+                c: colors[Math.floor(Math.random() * colors.length)]
+            }));
+            const t0 = performance.now();
+            (function frame(now) {
+                const el = now - t0;
+                ctx.clearRect(0, 0, cv.width, cv.height);
+                bits.forEach(b => {
+                    b.x += b.vx; b.y += b.vy; b.vy += 0.05; b.rot += b.vr;
+                    ctx.save(); ctx.translate(b.x, b.y); ctx.rotate(b.rot);
+                    ctx.fillStyle = b.c; ctx.fillRect(-b.w / 2, -b.h / 2, b.w, b.h);
+                    ctx.restore();
+                });
+                if (el < 2100) requestAnimationFrame(frame);
+                else { ctx.clearRect(0, 0, cv.width, cv.height); cv.classList.add("hidden"); }
+            })(t0);
+        }
+
+        /* ================= KEYBOARD ================= */
+        document.addEventListener("keydown", e => {
+            if (e.key === "Escape") { closeNote(); closeConfirm(); return; }
+            const tag = (e.target.tagName || "").toLowerCase();
+            if (tag === "input" || tag === "textarea" || e.metaKey || e.ctrlKey || e.altKey) return;
+            if (e.key === "/") {
+                e.preventDefault();
+                if (currentView !== "library") switchView("library");
+                const el = innerWidth >= 861 ? $("searchDesk") : $("searchMob");
+                if (el) el.focus();
+                return;
+            }
+            if (currentView === "quiz" && quizState && !quizState.done) {
+                const n = parseInt(e.key, 10);
+                if (n >= 1 && n <= 4 && quizState.picked[quizState.idx] === undefined) {
+                    chooseAnswer(quizState.list[quizState.idx].ord[n - 1]);
+                    return;
+                }
+                if (e.key === "Enter" && quizState.picked[quizState.idx] !== undefined) { nextQuestion(); return; }
+            }
+            if (currentView === "reader" && currentChapterId) {
+                const order = studyDatabase;
+                const idx = order.findIndex(c => c.id === currentChapterId);
+                if (e.key === "ArrowLeft" && idx > 0) openChapter(order[idx - 1].id);
+                if (e.key === "ArrowRight" && idx < order.length - 1) openChapter(order[idx + 1].id);
+            }
+        });
+
+        /* ================= INIT ================= */
+        ["noteModal", "confirmModal"].forEach(id => {
+            $(id).addEventListener("click", e => { if (e.target === $(id)) { closeNote(); closeConfirm(); } });
+        });
+        loadSave();
+        applyTheme();
+        $("saveStatus").textContent = store.persistent
+            ? "🟢 Auto-save is on in this browser."
+            : "🟠 This browser blocks auto-save, so export your progress before closing!";
+        renderHome();
+        renderLibrary();
+        renderProgress();
+        renderQuiz();
+        switchView("home");
+
+</script>
+</body>
+</html>
